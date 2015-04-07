@@ -1,8 +1,5 @@
 package button.football
 
-import grails.rest.*
-
-@Resource
 class ChampionshipType {
 
     String name
