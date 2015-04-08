@@ -1,5 +1,8 @@
 package button.football
 
+import grails.rest.*
+
+@Resource(uri='/teamTypes', formats=['json'])
 class TeamType {
 
     String description
