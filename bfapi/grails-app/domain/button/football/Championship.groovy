@@ -10,9 +10,9 @@ class Championship {
     Short numClassif
     ChampionshipStatus championshipStatus
 
-    static hasMany = [games: Game,
-                      groupStandings: GroupStanding,
-                      finalStandings: FinalStanding]
+    // static hasMany = [games: Game,
+    //                   groupStandings: GroupStanding,
+    //                   finalStandings: FinalStanding]
 
     static belongsTo = [ChampionshipStatus, ChampionshipType]
 

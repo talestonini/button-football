@@ -4,7 +4,7 @@ class GameType {
 
     String description
 
-    static hasMany = [games: Game]
+    // static hasMany = [games: Game]
 
     static mapping = {
         version false

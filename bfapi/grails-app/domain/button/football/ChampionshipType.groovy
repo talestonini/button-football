@@ -9,10 +9,10 @@ class ChampionshipType {
     String logoImgFile
     Short listOrder
 
-    static hasMany = [championships: Championship,
-                      scorings: Scoring,
-                      rankings: Ranking,
-                      unifiedRankingTypes: UnifiedRankingType]
+    // static hasMany = [championships: Championship,
+    //                   scorings: Scoring,
+    //                   rankings: Ranking,
+    //                   unifiedRankingTypes: UnifiedRankingType]
 
     static belongsTo = [TeamType]
 

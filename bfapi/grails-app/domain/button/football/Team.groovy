@@ -13,17 +13,17 @@ class Team {
     Country country
     String logoImgFile
 
-    static hasMany = [gamesForHomeTeam: Game,
-                      gamesForAwayTeam: Game,
-                      groupStandings: GroupStanding,
-                      finalStandings: FinalStanding,
-                      rankings: Ranking,
-                      unifiedRankings: UnifiedRanking]
+    // static hasMany = [gamesForHomeTeam: Game,
+    //                   gamesForAwayTeam: Game,
+    //                   groupStandings: GroupStanding,
+    //                   finalStandings: FinalStanding,
+    //                   rankings: Ranking,
+    //                   unifiedRankings: UnifiedRanking]
 
     static belongsTo = [TeamType, Country]
 
-    static mappedBy = [gamesForHomeTeam: "homeTeam",
-                       gamesForAwayTeam: "awayTeam"]
+    // static mappedBy = [gamesForHomeTeam: "homeTeam",
+    //                    gamesForAwayTeam: "awayTeam"]
 
     static mapping = {
         version false

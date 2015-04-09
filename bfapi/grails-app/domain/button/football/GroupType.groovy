@@ -4,7 +4,7 @@ class GroupType {
 
     String description
 
-    static hasMany = [groupStandings: GroupStanding]
+    // static hasMany = [groupStandings: GroupStanding]
 
     static mapping = {
         version false

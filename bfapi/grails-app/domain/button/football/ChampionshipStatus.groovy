@@ -4,7 +4,7 @@ class ChampionshipStatus {
 
     String description
 
-    static hasMany = [championships: Championship]
+    // static hasMany = [championships: Championship]
 
     static mapping = {
         version false

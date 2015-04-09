@@ -6,9 +6,9 @@ class UnifiedRankingType {
     TeamType teamType
     Short listOrder
 
-    static hasMany = [unifiedRankings: UnifiedRanking,
-                      championshipTypes: ChampionshipType,
-                      countries: Country]
+    // static hasMany = [unifiedRankings: UnifiedRanking,
+    //                   championshipTypes: ChampionshipType,
+    //                   countries: Country]
 
     static belongsTo = [TeamType, ChampionshipType, Country]
 
