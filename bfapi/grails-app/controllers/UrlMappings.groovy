@@ -11,6 +11,10 @@ class UrlMappings {
         '500'(view: '/error')
         '404'(view: '/notFound')
 
-        '/championshipTypes'(resources: 'championshipType')
+        '/api/teamTypes'(resource: 'teamType') {
+            '/championshipTypes'(resource: 'championshipType')
+        }
+
+        '/api/championshipTypes'(resources: 'championshipType')
     }
 }

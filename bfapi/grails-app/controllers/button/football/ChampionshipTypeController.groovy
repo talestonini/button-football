@@ -9,4 +9,11 @@ class ChampionshipTypeController extends RestfulController {
     ChampionshipTypeController() {
         super(ChampionshipType)
     }
+
+    @Override
+    protected ChampionshipType queryForResource(Serializable id) {
+        ChampionshipType.where {
+            id == id && teamType.id == request.JSON.params.teamTypeId
+        }.find()
+    }
 }
