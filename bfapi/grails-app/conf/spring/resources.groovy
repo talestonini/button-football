@@ -66,10 +66,10 @@ beans = {
     //     excludes = ['class']
     // }
 
-    // scoringJSONRenderer(JsonRenderer, Scoring) {
+    // scoreJSONRenderer(JsonRenderer, Score) {
     //     excludes = ['class']
     // }
-    // scoringJSONCollectionRenderer(JsonCollectionRenderer, Scoring) {
+    // scoreJSONCollectionRenderer(JsonCollectionRenderer, Score) {
     //     excludes = ['class']
     // }
 

@@ -10,7 +10,7 @@ class ChampionshipType {
     Short listOrder
 
     // static hasMany = [championships: Championship,
-    //                   scorings: Scoring,
+    //                   scores: Score,
     //                   rankings: Ranking,
     //                   unifiedRankingTypes: UnifiedRankingType]
 
