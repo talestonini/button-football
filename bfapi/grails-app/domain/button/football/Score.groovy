@@ -1,6 +1,6 @@
 package button.football
 
-class Scoring {
+class Score {
 
     ChampionshipType championshipType
     Short numPos
