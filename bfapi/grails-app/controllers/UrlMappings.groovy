@@ -13,9 +13,8 @@ class UrlMappings {
 
         '/api/teamTypes'(resources: 'teamType')
 
-        group "/api/teamTypes/$teamTypeId" {
-            "/championshipTypes"(controller: 'championshipType', action: 'list')
-            "/championshipTypes/$id?"(resources: 'championshipType')
+        '/api/teamTypes'(resources: 'teamType') {
+            '/championshipTypes'(resources: 'championshipType')
         }
 
         '/api/championshipTypes'(resources: 'championshipType')

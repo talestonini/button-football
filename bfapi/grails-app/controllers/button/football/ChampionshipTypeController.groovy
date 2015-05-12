@@ -11,11 +11,18 @@ class ChampionshipTypeController extends RestfulController {
     }
 
     @Override
+    protected List<ChampionshipType> listAllResources(Map params) {
+        ChampionshipType.where {
+            teamType.id == params.teamTypeId
+        }.findAll()
+    }
+
+    @Override
     protected ChampionshipType queryForResource(Serializable id) {
         def teamTypeId = params.teamTypeId
         ChampionshipType.where {
-            id == id
             teamType.id == teamTypeId
+            id == id
         }.find()
     }
 }
