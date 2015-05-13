@@ -13,10 +13,28 @@ class UrlMappings {
 
         '/api/teamTypes'(resources: 'teamType')
 
+        '/api/teams'(resources: 'team')
+
         '/api/teamTypes'(resources: 'teamType') {
-            '/championshipTypes'(resources: 'championshipType')
+            '/teams'(resources: 'team')
+        }
+
+        '/api/teamTypes'(resources: 'teamType') {
+            '/championshipTypes'(resources: 'championshipType') {
+                '/championships'(resources: 'championship') {
+                    '/games'(resources: 'game')
+                }
+            }
         }
 
         '/api/championshipTypes'(resources: 'championshipType')
+
+        '/api/championshipTypes'(resources: 'championshipType') {
+            '/championships'(resources: 'championship') {
+                '/games'(resources: 'game')
+            }
+        }
+
+        '/api/games'(resources: 'game')
     }
 }
