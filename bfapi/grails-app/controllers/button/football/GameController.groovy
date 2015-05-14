@@ -1,6 +1,7 @@
 package button.football
 
 import grails.rest.RestfulController
+import org.hibernate.FetchMode
 
 class GameController extends RestfulController {
 
@@ -24,10 +25,12 @@ class GameController extends RestfulController {
 
     @Override
     protected Game queryForResource(Serializable id) {
-        def championshipId = params.championshipId
-        Game.where {
-            if (championshipId) championship.id == championshipId
-            id == id
-        }.find()
+        Long championshipId = params.championshipId as Long
+        (Game) Game.withCriteria {
+            if (championshipId) eq 'championship.id', championshipId
+            eq 'id', id as Long
+            // fetchMode 'homeTeam', FetchMode.JOIN
+            // fetchMode 'awayTeam', FetchMode.JOIN
+        }[0]
     }
 }

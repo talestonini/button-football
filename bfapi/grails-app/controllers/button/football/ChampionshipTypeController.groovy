@@ -15,7 +15,7 @@ class ChampionshipTypeController extends RestfulController {
         def teamTypeId = params.teamTypeId
         ChampionshipType.where {
             if (teamTypeId) teamType.id == teamTypeId
-        }.findAll(sort: 'listOrder')
+        }.findAll() // (sort: 'listOrder')
     }
 
     @Override
