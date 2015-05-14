@@ -17,7 +17,7 @@ class ChampionshipController extends RestfulController {
         Championship.where {
             if (teamTypeId) championshipType.teamType.id == teamTypeId
             if (championshipTypeId) championshipType.id == championshipTypeId
-        }.findAll()
+        }.findAll(sort: 'numEdition')
     }
 
     @Override
