@@ -11,7 +11,19 @@ class UrlMappings {
         '500'(view: '/error')
         '404'(view: '/notFound')
 
-        '/api/teamTypes'(resources: 'teamType')
+        // main screen
+
+        '/api/teamTypes'(resources: 'teamType') {
+            '/championshipTypes'(resources: 'championshipType')
+        }
+
+        '/api/championshipTypes'(resources: 'championshipType') {
+            '/championships'(resources: 'championship') {
+                '/games'(resources: 'game')
+            }
+        }
+
+        // teams screen
 
         '/api/teams'(resources: 'team')
 
@@ -19,21 +31,7 @@ class UrlMappings {
             '/teams'(resources: 'team')
         }
 
-        '/api/teamTypes'(resources: 'teamType') {
-            '/championshipTypes'(resources: 'championshipType') {
-                '/championships'(resources: 'championship') {
-                    '/games'(resources: 'game')
-                }
-            }
-        }
-
-        '/api/championshipTypes'(resources: 'championshipType')
-
-        '/api/championshipTypes'(resources: 'championshipType') {
-            '/championships'(resources: 'championship') {
-                '/games'(resources: 'game')
-            }
-        }
+        // any screen
 
         '/api/games'(resources: 'game')
     }

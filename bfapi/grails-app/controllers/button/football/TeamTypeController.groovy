@@ -1,10 +1,6 @@
 package button.football
 
-import grails.rest.RestfulController
-
-class TeamTypeController extends RestfulController {
-
-    static responseFormats = ['json']
+class TeamTypeController extends BFRestfulController {
 
     TeamTypeController() {
         super(TeamType)

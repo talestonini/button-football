@@ -1,11 +1,6 @@
 package button.football
 
-import grails.rest.RestfulController
-import org.hibernate.FetchMode
-
-class GameController extends RestfulController {
-
-    static responseFormats = ['json']
+class GameController extends BFRestfulController {
 
     GameController() {
         super(Game)
