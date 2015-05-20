@@ -5,7 +5,7 @@ import grails.rest.RestfulController
 /**
  * Created by talestonini on 20/05/2015.
  */
-class BFRestfulController extends RestfulController {
+abstract class BFRestfulController extends RestfulController {
 
     static responseFormats = ['json']
 
@@ -14,7 +14,10 @@ class BFRestfulController extends RestfulController {
     }
 
     @Override
-    Object index(Integer max) {
-        return ((List) super.index(max)).toArray()
+    def index(Integer max) {
+        params.max = Math.min(max ?: 10, 100)
+
+        // toArray() is a workaround bug https://jira.grails.org/browse/GRAILS-11892
+        respond listAllResources(params).toArray(), model: [("${resourceName}Count".toString()): countResources()]
     }
 }

@@ -24,8 +24,6 @@ class GameController extends BFRestfulController {
         (Game) Game.withCriteria {
             if (championshipId) eq 'championship.id', championshipId
             eq 'id', id as Long
-            // fetchMode 'homeTeam', FetchMode.JOIN
-            // fetchMode 'awayTeam', FetchMode.JOIN
         }[0]
     }
 }
