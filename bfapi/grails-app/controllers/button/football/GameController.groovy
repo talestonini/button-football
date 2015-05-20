@@ -9,7 +9,7 @@ class GameController extends BFRestfulController {
     @Override
     protected List<Game> listAllResources(Map params) {
         Long championshipId = params.championshipId as Long
-        def gameTypeDesc = params.gameTypeDesc
+        def gameTypeDesc = params.gameType
         Game.withCriteria {
             if (championshipId) eq 'championship.id', championshipId
             if (gameTypeDesc) gameType { like 'description', "%$gameTypeDesc%" }

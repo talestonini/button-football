@@ -9,9 +9,10 @@ class ChampionshipController extends BFRestfulController {
     @Override
     protected List<Championship> listAllResources(Map params) {
         def championshipTypeId = params.championshipTypeId
-        Championship.where {
+        List<Championship> result = Championship.where {
             if (championshipTypeId) championshipType.id == championshipTypeId
-        }.findAll() // (sort: 'numEdition')
+        }.findAll()
+        result.sort { it.numEdition }
     }
 
     @Override

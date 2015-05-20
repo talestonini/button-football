@@ -9,9 +9,10 @@ class TeamController extends BFRestfulController {
     @Override
     protected List<Team> listAllResources(Map params) {
         def teamTypeId = params.teamTypeId
-        Team.where {
+        List<Team> result = Team.where {
             if (teamTypeId) teamType.id == teamTypeId
-        }.findAll() // (sort: 'name')
+        }.findAll()
+        result.sort { it.name }
     }
 
     @Override

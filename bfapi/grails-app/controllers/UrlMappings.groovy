@@ -13,14 +13,18 @@ class UrlMappings {
 
         // main screen
 
+        '/api/teamTypes'(resources: 'teamType')
+
         '/api/teamTypes'(resources: 'teamType') {
             '/championshipTypes'(resources: 'championshipType')
         }
 
         '/api/championshipTypes'(resources: 'championshipType') {
-            '/championships'(resources: 'championship') {
-                '/games'(resources: 'game')
-            }
+            '/championships'(resources: 'championship')
+        }
+
+        '/api/championships'(resources: 'championship') {
+            '/games'(resources: 'game')
         }
 
         // teams screen
