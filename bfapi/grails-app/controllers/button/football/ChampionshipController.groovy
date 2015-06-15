@@ -1,6 +1,6 @@
 package button.football
 
-class ChampionshipController extends BFRestfulController {
+class ChampionshipController extends AbstractRestfulController {
 
     ChampionshipController() {
         super(Championship)
