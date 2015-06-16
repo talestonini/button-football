@@ -1,6 +1,6 @@
 package button.football
 
-class GameController extends AbstractRestfulController {
+class GameController extends BaseRestfulController {
 
     GameController() {
         super(Game)
@@ -11,8 +11,12 @@ class GameController extends AbstractRestfulController {
         Long championshipId = params.championshipId as Long
         def gameTypeDesc = params.gameType
         Game.withCriteria {
-            if (championshipId) eq 'championship.id', championshipId
-            if (gameTypeDesc) gameType { like 'description', "%$gameTypeDesc%" }
+            if (championshipId) {
+                eq 'championship.id', championshipId
+            }
+            if (gameTypeDesc) {
+                gameType { like 'description', "%$gameTypeDesc%" }
+            }
             maxResults 64
             order 'gameType'
         }
@@ -21,9 +25,12 @@ class GameController extends AbstractRestfulController {
     @Override
     protected Game queryForResource(Serializable id) {
         Long championshipId = params.championshipId as Long
-        (Game) Game.withCriteria {
-            if (championshipId) eq 'championship.id', championshipId
+        List<Game> games = (Game) Game.withCriteria {
+            if (championshipId) {
+                eq 'championship.id', championshipId
+            }
             eq 'id', id as Long
-        }[0]
+        }
+        games[0]
     }
 }

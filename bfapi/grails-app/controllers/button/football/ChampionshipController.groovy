@@ -1,6 +1,6 @@
 package button.football
 
-class ChampionshipController extends AbstractRestfulController {
+class ChampionshipController extends BaseRestfulController {
 
     ChampionshipController() {
         super(Championship)
@@ -10,7 +10,9 @@ class ChampionshipController extends AbstractRestfulController {
     protected List<Championship> listAllResources(Map params) {
         def championshipTypeId = params.championshipTypeId
         List<Championship> result = Championship.where {
-            if (championshipTypeId) championshipType.id == championshipTypeId
+            if (championshipTypeId) {
+                championshipType.id == championshipTypeId
+            }
         }.findAll()
         result.sort { it.numEdition }
     }
@@ -19,7 +21,9 @@ class ChampionshipController extends AbstractRestfulController {
     protected Championship queryForResource(Serializable id) {
         def championshipTypeId = params.championshipTypeId
         Championship.where {
-            if (championshipTypeId) championshipType.id == championshipTypeId
+            if (championshipTypeId) {
+                championshipType.id == championshipTypeId
+            }
             id == id
         }.find()
     }

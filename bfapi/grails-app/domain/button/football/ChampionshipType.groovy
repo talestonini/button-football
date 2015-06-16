@@ -17,7 +17,7 @@ class ChampionshipType {
     static belongsTo = [TeamType]
 
     static mapping = {
-        unifiedRankingTypes joinTable: [name: 'mm_unif_rk_type_champ_type', key:'championship_type_id']
+        unifiedRankingTypes joinTable: [name: 'mm_unif_rk_type_champ_type', key: 'championship_type_id']
         version false
     }
 

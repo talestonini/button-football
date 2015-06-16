@@ -98,8 +98,8 @@ ruleset {
     VectorIsObsolete
 
     // rulesets/design.xml
-    AbstractClassWithPublicConstructor
-    AbstractClassWithoutAbstractMethod
+    //AbstractClassWithPublicConstructor
+    //AbstractClassWithoutAbstractMethod
     BooleanMethodReturnsNull
     BuilderMethodWithSideEffects
     CloneableWithoutClone
@@ -121,8 +121,8 @@ ruleset {
     ToStringReturnsNull
 
     // rulesets/dry.xml
-    DuplicateListLiteral
-    DuplicateMapLiteral
+    //DuplicateListLiteral
+    //DuplicateMapLiteral
     //DuplicateNumberLiteral
     //DuplicateStringLiteral
 
@@ -177,7 +177,9 @@ ruleset {
     SpaceAfterSwitch
     SpaceAfterWhile
     SpaceAroundClosureArrow
-    SpaceAroundMapEntryColon
+    SpaceAroundMapEntryColon {
+        characterAfterColonRegex = ' '
+    }
     SpaceAroundOperator
     SpaceBeforeClosingBrace
     SpaceBeforeOpeningBrace

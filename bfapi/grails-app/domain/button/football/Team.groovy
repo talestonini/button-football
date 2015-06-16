@@ -1,8 +1,5 @@
 package button.football
 
-import grails.rest.*
-
-//@Resource(uri='/teams', formats=['json'])
 class Team {
 
     String name

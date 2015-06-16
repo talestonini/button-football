@@ -1,6 +1,6 @@
 package button.football
 
-class TeamController extends AbstractRestfulController {
+class TeamController extends BaseRestfulController {
 
     TeamController() {
         super(Team)
@@ -10,7 +10,9 @@ class TeamController extends AbstractRestfulController {
     protected List<Team> listAllResources(Map params) {
         def teamTypeId = params.teamTypeId
         List<Team> result = Team.where {
-            if (teamTypeId) teamType.id == teamTypeId
+            if (teamTypeId) {
+                teamType.id == teamTypeId
+            }
         }.findAll()
         result.sort { it.name }
     }
@@ -19,7 +21,9 @@ class TeamController extends AbstractRestfulController {
     protected Team queryForResource(Serializable id) {
         def teamTypeId = params.teamTypeId
         Team.where {
-            if (teamTypeId) teamType.id == teamTypeId
+            if (teamTypeId) {
+                teamType.id == teamTypeId
+            }
             id == id
         }.find()
     }

@@ -5,11 +5,11 @@ import grails.rest.RestfulController
 /**
  * Created by talestonini on 20/05/2015.
  */
-abstract class AbstractRestfulController extends RestfulController {
+abstract class BaseRestfulController extends RestfulController {
 
     static responseFormats = ['json']
 
-    AbstractRestfulController(Class resource) {
+    BaseRestfulController(Class resource) {
         super(resource)
     }
 
