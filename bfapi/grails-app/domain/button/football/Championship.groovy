@@ -1,5 +1,8 @@
 package button.football
 
+import groovy.transform.EqualsAndHashCode
+
+@EqualsAndHashCode
 class Championship {
 
     ChampionshipType championshipType
@@ -26,22 +29,7 @@ class Championship {
     }
 
     @Override
-    boolean equals(Object obj) {
-        if (!obj instanceof Championship) {
-            return false
-        } else {
-            Championship other = (Championship) obj
-            return this.id == other.id
-        }
-    }
-
-    @Override
-    int hashCode() {
-        return this.id.hashCode()
-    }
-
-    @Override
     String toString() {
-        return "${championshipType.name} - ed ${numEdition}"
+        "$championshipType.name - ed $numEdition"
     }
 }

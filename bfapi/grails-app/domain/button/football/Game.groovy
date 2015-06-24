@@ -1,5 +1,8 @@
 package button.football
 
+import groovy.transform.EqualsAndHashCode
+
+@EqualsAndHashCode
 class Game {
 
     Championship championship
@@ -26,5 +29,10 @@ class Game {
         numAwayTeamExtraGoals nullable: true
         numHomeTeamPntGoals nullable: true
         numAwayTeamPntGoals nullable: true
+    }
+
+    @Override
+    String toString() {
+        "$homeTeam.name vs $awayTeam.name"
     }
 }

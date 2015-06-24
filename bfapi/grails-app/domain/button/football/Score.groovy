@@ -1,5 +1,8 @@
 package button.football
 
+import groovy.transform.EqualsAndHashCode
+
+@EqualsAndHashCode
 class Score {
 
     ChampionshipType championshipType

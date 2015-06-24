@@ -1,5 +1,8 @@
 package button.football
 
+import groovy.transform.EqualsAndHashCode
+
+@EqualsAndHashCode
 class UnifiedRankingType {
 
     String name
@@ -21,5 +24,10 @@ class UnifiedRankingType {
     static constraints = {
         name maxSize: 40, unique: true
         listOrder nullable: true
+    }
+
+    @Override
+    String toString() {
+        name
     }
 }

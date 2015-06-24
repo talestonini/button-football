@@ -1,5 +1,8 @@
 package button.football
 
+import groovy.transform.EqualsAndHashCode
+
+@EqualsAndHashCode
 class TeamType {
 
     String description
@@ -14,5 +17,10 @@ class TeamType {
 
     static constraints = {
         description maxSize: 20
+    }
+
+    @Override
+    String toString() {
+        description
     }
 }

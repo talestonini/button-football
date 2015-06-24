@@ -1,5 +1,8 @@
 package button.football
 
+import groovy.transform.EqualsAndHashCode
+
+@EqualsAndHashCode
 class Team {
 
     String name
@@ -32,5 +35,10 @@ class Team {
         foundation nullable: true, maxSize: 4
         city nullable: true, maxSize: 20
         logoImgFile nullable: true
+    }
+
+    @Override
+    String toString() {
+        name
     }
 }

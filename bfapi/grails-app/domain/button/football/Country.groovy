@@ -1,5 +1,8 @@
 package button.football
 
+import groovy.transform.EqualsAndHashCode
+
+@EqualsAndHashCode
 class Country {
 
     String name
@@ -14,5 +17,10 @@ class Country {
 
     static constraints = {
         name maxSize: 30, unique: true
+    }
+
+    @Override
+    String toString() {
+        name
     }
 }
