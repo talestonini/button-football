@@ -14,6 +14,7 @@ buildscript {
 
 plugins {
     id "io.spring.dependency-management" version "0.4.0.RELEASE"
+    id 'net.saliman.cobertura' version '2.2.6'
 }
 
 version "0.1"
@@ -57,6 +58,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-tomcat"
     compile "org.grails:grails-dependencies"
     compile "org.grails:grails-web-boot"
+    compile 'org.codehaus.groovy:groovy-all:2.4.3'
 
     compile "org.grails.plugins:hibernate"
     compile "org.grails.plugins:cache"
@@ -68,6 +70,7 @@ dependencies {
 
     testCompile "org.grails:grails-plugin-testing"
     testCompile "org.grails.plugins:geb"
+    testCompile 'junit:junit:4.12'
 
     // Note: It is recommended to update to a more robust driver (Chrome, Firefox etc.)
     testRuntime 'org.seleniumhq.selenium:selenium-htmlunit-driver:2.44.0'
