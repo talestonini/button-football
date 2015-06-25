@@ -30,6 +30,6 @@ class Championship {
 
     @Override
     String toString() {
-        "$championshipType.name ed $numEdition"
+        "$championshipType ed $numEdition"
     }
 }
