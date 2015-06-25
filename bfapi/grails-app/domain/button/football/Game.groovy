@@ -33,6 +33,6 @@ class Game {
 
     @Override
     String toString() {
-        "$homeTeam.name vs $awayTeam.name"
+        "$homeTeam.name $numHomeTeamGoals x $awayTeam.name $numAwayTeamGoals, $gameType, $championship.championshipType ed $championship.numEdition"
     }
 }
