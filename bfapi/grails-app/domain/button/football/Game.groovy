@@ -33,6 +33,22 @@ class Game {
 
     @Override
     String toString() {
-        "$homeTeam.name $numHomeTeamGoals x $awayTeam.name $numAwayTeamGoals, $gameType, $championship"
+        String homeScore = '', awayScore = ''
+        if (numHomeTeamGoals != null || numAwayTeamGoals != null) {
+            homeScore = " $numHomeTeamGoals"
+            awayScore = " $numAwayTeamGoals"
+            if (!(gameType ==~ /Group.*/)
+                    && (numHomeTeamGoals == numAwayTeamGoals)
+                    && (numHomeTeamExtraGoals != null || numAwayTeamExtraGoals != null)) {
+                homeScore += "-$numHomeTeamExtraGoals"
+                awayScore += "-$numAwayTeamExtraGoals"
+                if ((numHomeTeamExtraGoals == numAwayTeamExtraGoals)
+                        && (numHomeTeamPntGoals != null || numAwayTeamPntGoals != null)) {
+                    homeScore += "-$numHomeTeamPntGoals"
+                    awayScore += "-$numAwayTeamPntGoals"
+                }
+            }
+        }
+        "$homeTeam.name$homeScore x $awayTeam.name$awayScore, $gameType, $championship"
     }
 }
