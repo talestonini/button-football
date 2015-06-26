@@ -5,19 +5,16 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url "https://repo.grails.org/grails/core" }
-        jcenter()
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
         classpath 'com.bertramlabs.plugins:asset-pipeline-gradle:2.1.1'
-        classpath 'net.saliman:gradle-cobertura-plugin:2.2.6'
-        classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.7'
     }
 }
 
 plugins {
     id "io.spring.dependency-management" version "0.4.0.RELEASE"
-    id 'net.saliman.cobertura' version '2.2.6'
+    id 'net.saliman.cobertura' version '2.2.8'
 }
 
 configurations.all {
@@ -40,7 +37,6 @@ apply plugin: 'idea'
 apply plugin: "org.grails.grails-web"
 apply plugin: "org.grails.grails-gsp"
 apply plugin: 'codenarc'
-apply plugin: 'cobertura'
 
 ext {
     grailsVersion = project.grailsVersion
