@@ -29,4 +29,9 @@ class GroupStanding {
         numIntraGrpPos nullable: true
         numExtraGrpPos nullable: true
     }
+
+    @Override
+    String toString() {
+        " $numIntraGrpPos ($numExtraGrpPos) - $team, $championship, $groupType"
+    }
 }

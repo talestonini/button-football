@@ -33,4 +33,9 @@ class Ranking {
     static constraints = {
         numAvgPos scale: 5
     }
+
+    @Override
+    String toString() {
+        "$numRankingPos - $team, $championshipType"
+    }
 }

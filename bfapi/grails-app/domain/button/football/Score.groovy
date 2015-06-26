@@ -14,4 +14,9 @@ class Score {
     static mapping = {
         version false
     }
+
+    @Override
+    String toString() {
+        "$championshipType: pos $numPos -> $numPoints points"
+    }
 }

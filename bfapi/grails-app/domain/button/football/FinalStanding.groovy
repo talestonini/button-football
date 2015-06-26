@@ -22,4 +22,9 @@ class FinalStanding {
     static mapping = {
         version false
     }
+
+    @Override
+    String toString() {
+        "$numFinalPos - $team, $championship"
+    }
 }
