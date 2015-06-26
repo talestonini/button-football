@@ -16,7 +16,7 @@ ruleset {
     BrokenOddnessCheck
     ClassForName
     ComparisonOfTwoConstants
-    //ComparisonWithSelf -> DetachedCriteria can have sth like 'id == id' as lhs always refers to domain class prop
+    ComparisonWithSelf
     ConstantAssertExpression
     ConstantIfExpression
     ConstantTernaryExpression
@@ -98,8 +98,8 @@ ruleset {
     VectorIsObsolete
 
     // rulesets/design.xml
-    //AbstractClassWithPublicConstructor
-    //AbstractClassWithoutAbstractMethod
+    AbstractClassWithPublicConstructor
+    AbstractClassWithoutAbstractMethod
     BooleanMethodReturnsNull
     BuilderMethodWithSideEffects
     CloneableWithoutClone
@@ -302,7 +302,7 @@ ruleset {
     FactoryMethodName
     FieldName
     InterfaceName
-    MethodName
+    //MethodName -> Spock allows for non-camel-case method names
     ObjectOverrideMisspelledMethodName
     PackageName
     PackageNameMatchesFilePath
