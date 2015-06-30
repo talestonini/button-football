@@ -1,6 +1,7 @@
 package button.football
 
 import groovy.transform.EqualsAndHashCode
+import org.gcontracts.annotations.*
 
 @EqualsAndHashCode
 class Game {
@@ -33,28 +34,23 @@ class Game {
 
     @Override
     String toString() {
-        String homeScore = '', awayScore = ''
+        "$homeTeam.name${score('Home')} x $awayTeam.name${score('Away')}, $gameType, $championship"
+    }
 
-        if (numHomeTeamGoals != null) {
-            homeScore = " $numHomeTeamGoals"
-        }
-        if (numHomeTeamExtraGoals != null) {
-            homeScore += "-$numHomeTeamExtraGoals"
-        }
-        if (numHomeTeamPntGoals != null) {
-            homeScore += "($numHomeTeamPntGoals)"
-        }
+    @Requires({ team in ['Home', 'Away'] })
+    private String score(String team) {
+        // main score
+        def field = "num${team}TeamGoals"
+        String theScore = this[field] != null ? " ${this[field]}" : ''
 
-        if (numAwayTeamGoals != null) {
-            awayScore = " $numAwayTeamGoals"
-        }
-        if (numAwayTeamExtraGoals != null) {
-            awayScore += "-$numAwayTeamExtraGoals"
-        }
-        if (numAwayTeamPntGoals != null) {
-            awayScore += "($numAwayTeamPntGoals)"
-        }
+        // extra-time score
+        field = "num${team}TeamExtraGoals"
+        theScore += this[field] != null ? "-${this[field]}" : ''
 
-        "$homeTeam.name$homeScore x $awayTeam.name$awayScore, $gameType, $championship"
+        // penalties score
+        field = "num${team}TeamPntGoals"
+        theScore += this[field] != null ? "(${this[field]})" : ''
+
+        return theScore
     }
 }

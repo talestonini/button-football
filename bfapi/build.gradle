@@ -68,6 +68,7 @@ dependencies {
     compile "org.grails:grails-dependencies"
     compile "org.grails:grails-web-boot"
     compile 'org.codehaus.groovy:groovy-all:2.4.3'
+    compile 'org.gcontracts:gcontracts-core:1.2.12'
 
     compile "org.grails.plugins:hibernate"
     compile "org.grails.plugins:cache"
@@ -96,6 +97,10 @@ codenarcMain {
 }
 
 codenarcTest {
+    config = resources.text.fromFile('config/codenarc/testRuleset.groovy')
+}
+
+codenarcIntegrationTest {
     config = resources.text.fromFile('config/codenarc/testRuleset.groovy')
 }
 
