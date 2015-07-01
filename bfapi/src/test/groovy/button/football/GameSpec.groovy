@@ -11,10 +11,7 @@ class GameSpec extends Specification {
 
     ChampionshipType aChampionshipType = new ChampionshipType(name: 'Campeonato Brasileiro')
     Championship aChampionship = new Championship(championshipType: aChampionshipType, numEdition: 2)
-    Game game1 = new Game()
-    Game game2 = new Game()
-    Game game3 = new Game()
-    Game game4 = new Game()
+    Game game1 = new Game(), game2 = new Game(), game3 = new Game(), game4 = new Game()
 
     def setup() {
         game1.with {
