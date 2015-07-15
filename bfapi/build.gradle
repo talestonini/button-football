@@ -36,7 +36,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: "org.grails.grails-web"
 apply plugin: "org.grails.grails-gsp"
-apply plugin: 'codenarc'
+//apply plugin: 'codenarc'
 
 ext {
     grailsVersion = project.grailsVersion
@@ -76,7 +76,8 @@ dependencies {
 
     runtime "org.grails.plugins:asset-pipeline"
     runtime "org.grails.plugins:scaffolding"
-    runtime 'mysql:mysql-connector-java:5.1.33'
+    //runtime "mysql:mysql-connector-java:5.1.33"
+    runtime('org.hsqldb:hsqldb:2.0.0')
 
     testCompile "org.grails:grails-plugin-testing"
     testCompile "org.grails.plugins:geb"
@@ -92,17 +93,17 @@ task wrapper(type: Wrapper) {
     gradleVersion = gradleWrapperVersion
 }
 
-codenarcMain {
-    config = resources.text.fromFile('config/codenarc/ruleset.groovy')
-}
-
-codenarcTest {
-    config = resources.text.fromFile('config/codenarc/testRuleset.groovy')
-}
-
-codenarcIntegrationTest {
-    config = resources.text.fromFile('config/codenarc/testRuleset.groovy')
-}
+//codenarcMain {
+//    config = resources.text.fromFile('config/codenarc/ruleset.groovy')
+//}
+//
+//codenarcTest {
+//    config = resources.text.fromFile('config/codenarc/testRuleset.groovy')
+//}
+//
+//codenarcIntegrationTest {
+//    config = resources.text.fromFile('config/codenarc/testRuleset.groovy')
+//}
 
 cobertura {
     coverageExcludes = ['.*bfapi.Application.*', '.*BootStrap.*', '.*UrlMappings.*']
