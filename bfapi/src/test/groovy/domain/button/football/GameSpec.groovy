@@ -55,31 +55,31 @@ class GameSpec extends Specification {
         }
     }
 
-    void "test toString for game with no scores"() {
+    void 'test toString for game with no scores'() {
         when:
         def toString = game1.toString()
         then:
-        toString == 'Corinthians x Palmeiras, Group A 1, Campeonato Brasileiro ed 2'
+        toString == 'Corinthians vs. Palmeiras, Group A 1, Campeonato Brasileiro ed 2'
     }
 
-    void "test toString for game with main scores"() {
+    void 'test toString for game with main scores'() {
         when:
         def toString = game2.toString()
         then:
-        toString == 'Flamengo 0 x Vasco 0, Group B 3, Campeonato Brasileiro ed 2'
+        toString == 'Flamengo 0 vs. Vasco 0, Group B 3, Campeonato Brasileiro ed 2'
     }
 
-    void "test toString for game with main and extra-time scores"() {
+    void 'test toString for game with main and extra-time scores'() {
         when:
         def toString = game3.toString()
         then:
-        toString == 'Cruzeiro 2-1 x Atlético Mineiro 2-0, Semi Final AD, Campeonato Brasileiro ed 2'
+        toString == 'Cruzeiro 2-1 vs. Atlético Mineiro 2-0, Semi Final AD, Campeonato Brasileiro ed 2'
     }
 
-    void "test toString for game with main, extra-time and penalties scores"() {
+    void 'test toString for game with main, extra-time and penalties scores'() {
         when:
         def toString = game4.toString()
         then:
-        toString == 'Grêmio 1-0(4) x Internacional 1-0(5), Grand Final, Campeonato Brasileiro ed 2'
+        toString == 'Grêmio 1-0(4) vs. Internacional 1-0(5), Grand Final, Campeonato Brasileiro ed 2'
     }
 }

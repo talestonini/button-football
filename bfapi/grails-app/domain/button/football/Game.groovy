@@ -34,7 +34,7 @@ class Game {
 
     @Override
     String toString() {
-        "$homeTeam.name${score('Home')} x $awayTeam.name${score('Away')}, $gameType, $championship"
+        "$homeTeam.name${score('Home')} vs. $awayTeam.name${score('Away')}, $gameType, $championship"
     }
 
     @Requires({ team in ['Home', 'Away'] })

@@ -32,7 +32,6 @@ group "bfapi"
 apply plugin: "spring-boot"
 apply plugin: "war"
 apply plugin: "asset-pipeline"
-apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: "org.grails.grails-web"
 apply plugin: "org.grails.grails-gsp"
@@ -67,7 +66,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-tomcat"
     compile "org.grails:grails-dependencies"
     compile "org.grails:grails-web-boot"
-    compile 'org.codehaus.groovy:groovy-all:2.4.3'
+    compile 'org.codehaus.groovy:groovy-all:2.4.4'
     compile 'org.gcontracts:gcontracts-core:1.2.12'
 
     compile "org.grails.plugins:hibernate"
@@ -80,7 +79,7 @@ dependencies {
     runtime('org.hsqldb:hsqldb:2.0.0')
 
     testCompile "org.grails:grails-plugin-testing"
-    testCompile "org.grails.plugins:geb"
+//    testCompile "org.grails.plugins:geb"
     testCompile 'junit:junit:4.12'
 
     // Note: It is recommended to update to a more robust driver (Chrome, Firefox etc.)
@@ -93,14 +92,14 @@ task wrapper(type: Wrapper) {
     gradleVersion = gradleWrapperVersion
 }
 
-//codenarcMain {
-//    config = resources.text.fromFile('config/codenarc/ruleset.groovy')
-//}
-//
-//codenarcTest {
-//    config = resources.text.fromFile('config/codenarc/testRuleset.groovy')
-//}
-//
+codenarcMain {
+    config = resources.text.fromFile('config/codenarc/ruleset.groovy')
+}
+
+codenarcTest {
+    config = resources.text.fromFile('config/codenarc/testRuleset.groovy')
+}
+
 //codenarcIntegrationTest {
 //    config = resources.text.fromFile('config/codenarc/testRuleset.groovy')
 //}
