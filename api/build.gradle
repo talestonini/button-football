@@ -48,5 +48,5 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.6'
 }
 
-// TODO follow bug: http://stackoverflow.com/questions/30343603/no-value-has-been-specified-for-property-mainclassname
+// TODO follow bug http://stackoverflow.com/questions/30343603/no-value-has-been-specified-for-property-mainclassname
 mainClassName = 'bla'

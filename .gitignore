@@ -1,0 +1,7 @@
+.gradle/*
+bfapi/build/*
+bfapi/.gradle/*
+bfapi/.idea/*
+api/build/*
+api/.gradle/*
+api/.idea/*
