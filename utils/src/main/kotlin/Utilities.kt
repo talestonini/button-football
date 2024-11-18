@@ -1,4 +1,4 @@
-package org.example.utils
+package com.talestonini.utils
 
 import kotlinx.datetime.*
 import kotlinx.serialization.Serializable

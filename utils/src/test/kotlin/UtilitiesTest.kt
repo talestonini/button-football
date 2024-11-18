@@ -1,10 +1,10 @@
-package org.example.utils
+package com.talestonini.utils
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
-import org.example.utils.*
+import com.talestonini.utils.*
 
 internal class PrinterTest {
 

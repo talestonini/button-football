@@ -1,6 +1,6 @@
-package org.example.app
+package com.talestonini.app
 
-import org.example.utils.Printer
+import com.talestonini.utils.Printer
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
