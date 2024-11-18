@@ -1,20 +1,23 @@
 package com.talestonini.app
 
-import com.talestonini.utils.Printer
+import com.talestonini.app.model.Team
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.transaction
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 fun main() {
-    val name = "Kotlin"
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    val message = "Hello, $name!"
-    val printer = Printer(message)
-    printer.printMessage()
+    Database.connect("jdbc:mysql://localhost:3306/buttonfootball", driver = "com.mysql.cj.jdbc.Driver",
+        user = "root", password = "buttonfootball")
 
-    for (i in 1..5) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        println("i = $i")
+    transaction {
+        addLogger(StdOutSqlLogger)
+
+        val query = Team.selectAll().where { Team.name eq "Corinthians" }
+
+        query.forEach {
+            println("${it[Team.name]} was founded in ${it[Team.foundation]}")
+        }
     }
 }
