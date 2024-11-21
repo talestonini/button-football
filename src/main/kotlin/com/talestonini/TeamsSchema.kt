@@ -3,6 +3,7 @@ package com.talestonini
 import com.talestonini.model.Teams
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.selectAll
 
 @Serializable
@@ -14,9 +15,20 @@ class TeamService(database: Database) : BaseService() {
         return dbQuery {
             Teams.selectAll()
                 .where { Teams.name eq name }
-                .map { ExposedTeam(it[Teams.id].value, it[Teams.name], it[Teams.codType], it[Teams.fullName],
-                    it[Teams.foundation], it[Teams.city], it[Teams.codCountry], it[Teams.logoImgFile]) }
+                .map { teamMapper(it) }
                 .singleOrNull()
         }
     }
+
+    private fun teamMapper(teamRow: ResultRow): ExposedTeam =
+        ExposedTeam(
+            teamRow[Teams.id].value,
+            teamRow[Teams.name],
+            teamRow[Teams.codType],
+            teamRow[Teams.fullName],
+            teamRow[Teams.foundation],
+            teamRow[Teams.city],
+            teamRow[Teams.codCountry],
+            teamRow[Teams.logoImgFile]
+        )
 }
