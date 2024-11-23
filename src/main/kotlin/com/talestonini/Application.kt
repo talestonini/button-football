@@ -66,8 +66,16 @@ fun Application.configureRouting() {
 
 fun Application.getDatabase() =
     Database.connect(
-        url = "jdbc:mysql://localhost:3306/buttonfootball",
-        user = "root",
-        driver = "com.mysql.cj.jdbc.Driver",
+        url = "jdbc:h2:/Users/talestonini/dev/repos/button-football/h2db/buttonfootball",
+        user = "sa",
+        driver = "org.h2.Driver",
         password = "buttonfootball",
     )
+
+//fun Application.getDatabase() =
+//    Database.connect(
+//        url = "jdbc:mysql://localhost:3306/buttonfootball",
+//        user = "root",
+//        driver = "com.mysql.cj.jdbc.Driver",
+//        password = "buttonfootball",
+//    )
