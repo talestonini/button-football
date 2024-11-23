@@ -1,4 +1,4 @@
-package com.talestonini
+package com.talestonini.service
 
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction

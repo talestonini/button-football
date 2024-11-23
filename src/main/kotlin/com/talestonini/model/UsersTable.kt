@@ -2,7 +2,7 @@ package com.talestonini.model
 
 import org.jetbrains.exposed.sql.Table
 
-object Users : Table() {
+object UsersTable : Table() {
     val id = integer("ID").autoIncrement()
     val name = varchar("NAME", length = 50)
     val age = integer("AGE")
@@ -11,4 +11,3 @@ object Users : Table() {
     override val tableName: String
         get() = "USER"
 }
-

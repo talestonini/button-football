@@ -1,6 +1,6 @@
-package com.talestonini
+package com.talestonini.service
 
-import com.talestonini.model.Users
+import com.talestonini.model.UsersTable
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -12,29 +12,29 @@ data class ExposedUser(val name: String, val age: Int)
 class UserService(database: Database) : BaseService() {
     init {
         transaction(database) {
-            SchemaUtils.create(Users)
+            SchemaUtils.create(UsersTable)
         }
     }
 
     suspend fun create(user: ExposedUser): Int = dbQuery {
-        Users.insert {
+        UsersTable.insert {
             it[name] = user.name
             it[age] = user.age
-        }[Users.id]
+        }[UsersTable.id]
     }
 
     suspend fun read(id: Int): ExposedUser? {
         return dbQuery {
-            Users.selectAll()
-                .where { Users.id eq id }
-                .map { ExposedUser(it[Users.name], it[Users.age]) }
+            UsersTable.selectAll()
+                .where { UsersTable.id eq id }
+                .map { ExposedUser(it[UsersTable.name], it[UsersTable.age]) }
                 .singleOrNull()
         }
     }
 
     suspend fun update(id: Int, user: ExposedUser) {
         dbQuery {
-            Users.update({ Users.id eq id }) {
+            UsersTable.update({ UsersTable.id eq id }) {
                 it[name] = user.name
                 it[age] = user.age
             }
@@ -43,7 +43,7 @@ class UserService(database: Database) : BaseService() {
 
     suspend fun delete(id: Int) {
         dbQuery {
-            Users.deleteWhere { Users.id.eq(id) }
+            UsersTable.deleteWhere { UsersTable.id.eq(id) }
         }
     }
 }

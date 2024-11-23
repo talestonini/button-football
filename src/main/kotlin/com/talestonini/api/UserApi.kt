@@ -1,34 +1,18 @@
-package com.talestonini
+package com.talestonini.api
 
+import com.talestonini.getDatabase
+import com.talestonini.service.ExposedUser
+import com.talestonini.service.UserService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.jetbrains.exposed.sql.*
 
-fun Application.configureDatabases() {
-    val database = Database.connect(
-        url = "jdbc:mysql://localhost:3306/buttonfootball",
-        user = "root",
-        driver = "com.mysql.cj.jdbc.Driver",
-        password = "buttonfootball",
-    )
-
-    val userService = UserService(database)
-    val teamService = TeamService(database)
+fun Application.configureUserApi() {
+    val userService = UserService(getDatabase())
 
     routing {
-        get("/teams") {
-            val name = call.queryParameters["name"] ?: throw IllegalArgumentException("Missing team name")
-            val team = teamService.readByName(name)
-            if (team != null) {
-                call.respond(HttpStatusCode.OK, team)
-            } else {
-                call.respond(HttpStatusCode.NotFound)
-            }
-        }
-
         // Create user
         post("/users") {
             val user = call.receive<ExposedUser>()

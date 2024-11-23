@@ -1,5 +1,7 @@
 package com.talestonini
 
+import com.talestonini.api.configureTeamApi
+import com.talestonini.api.configureUserApi
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -24,7 +26,7 @@ class ApplicationTest {
     @Test
     fun testReadUser() = testApplication {
         application {
-            configureDatabases()
+            configureUserApi()
         }
         install(ContentNegotiation) {
             json()
@@ -37,7 +39,7 @@ class ApplicationTest {
     @Test
     fun testReadTeamByName() = testApplication {
         application {
-            configureDatabases()
+            configureTeamApi()
         }
         install(ContentNegotiation) {
             json()
