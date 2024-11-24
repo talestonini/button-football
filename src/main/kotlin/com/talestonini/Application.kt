@@ -14,6 +14,17 @@ import org.jetbrains.exposed.sql.Database
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
+fun Application.getDatabase(): Database {
+    val profile = environment.config.property("ktor.profile").getString()
+    val dbConfig = "ktor.$profile.db"
+    return Database.connect(
+        url = environment.config.property("$dbConfig.url").getString(),
+        driver = environment.config.property("$dbConfig.driver").getString(),
+        user = environment.config.property("$dbConfig.user").getString(),
+        password = environment.config.property("$dbConfig.password").getString()
+    )
+}
+
 fun Application.module() {
     installCors()
     configureSerialization()
@@ -63,19 +74,3 @@ fun Application.configureRouting() {
         }
     }
 }
-
-fun Application.getDatabase() =
-    Database.connect(
-        url = "jdbc:h2:/Users/talestonini/dev/repos/button-football/h2db/buttonfootball",
-        user = "sa",
-        driver = "org.h2.Driver",
-        password = "buttonfootball",
-    )
-
-//fun Application.getDatabase() =
-//    Database.connect(
-//        url = "jdbc:mysql://localhost:3306/buttonfootball",
-//        user = "root",
-//        driver = "com.mysql.cj.jdbc.Driver",
-//        password = "buttonfootball",
-//    )

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlin.plugin.serialization)
+    alias(libs.plugins.shadow)
 }
 
 group = "com.talestonini"
@@ -18,7 +19,6 @@ dependencies {
     implementation(libs.bundles.kotlinx.ecosystem)
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.exposed)
-    // implementation(libs.mysql.connector)
     implementation(libs.h2)
     implementation(libs.logback.classic)
     testImplementation(libs.ktor.server.test.host)
