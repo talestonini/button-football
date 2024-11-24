@@ -15,7 +15,8 @@ import org.jetbrains.exposed.sql.Database
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.getDatabase(): Database {
-    val profile = environment.config.property("ktor.profile").getString()
+    val profile = environment.config.propertyOrNull("ktor.profile")?.getString() ?: "dev"
+    log.info("app execution profile: $profile")
     val dbConfig = "ktor.$profile.db"
     return Database.connect(
         url = environment.config.property("$dbConfig.url").getString(),
