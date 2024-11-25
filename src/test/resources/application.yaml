@@ -3,7 +3,7 @@ ktor:
 
   test:
     db:
-      url: 'jdbc:h2:./h2db/buttonfootball'
+      url: 'jdbc:h2:./h2/db/buttonfootball'
       driver: org.h2.Driver
       user: sa
       password: buttonfootball
