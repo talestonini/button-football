@@ -1,10 +1,21 @@
 FROM eclipse-temurin:21-jdk-jammy
-RUN apt-get update && apt-get install -y h2 wget unzip \
+WORKDIR /app
+COPY . /app
+
+# download OS dependencies
+RUN apt-get update && apt-get install -y wget unzip \
     && wget https://services.gradle.org/distributions/gradle-8.10-bin.zip -P /tmp \
     && unzip -d /opt/gradle /tmp/gradle-8.10-bin.zip \
     && ln -s /opt/gradle/gradle-8.10/bin/gradle /usr/bin/gradle
-WORKDIR /app
-COPY . /app
+
+# unzip h2 binaries
+RUN unzip -d /usr/share/h2 /app/h2bin/h2-2024-08-11.zip
+
+# build the app
 RUN gradle clean build shadowJar
+
+# run H2 as server and the app
 CMD ["/app/run.sh"]
-EXPOSE 9092, 8080
+
+# expose database and app ports
+EXPOSE 9092 8080
