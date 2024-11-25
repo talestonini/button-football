@@ -1,6 +1,7 @@
 FROM eclipse-temurin:21-jdk-jammy
 WORKDIR /app
 COPY . /app
+RUN chmod +x /app/run.sh
 
 # expose database and app ports
 EXPOSE 9092 8080
