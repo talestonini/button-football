@@ -3,14 +3,14 @@ ktor:
 
   dev:
     db:
-      url: 'jdbc:h2:tcp://localhost:9092/buttonfootball'
+      url: 'jdbc:h2:./h2/db/buttonfootball'
       driver: org.h2.Driver
       user: sa
       password: buttonfootball
 
   prod:
     db:
-      url: 'jdbc:h2:tcp://button-football-1013778508330.us-central1.run.app:9092/buttonfootball'
+      url: 'jdbc:h2:tcp://34.66.29.73:9092/buttonfootball'
       driver: org.h2.Driver
       user: sa
       password: buttonfootball

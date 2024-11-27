@@ -14,7 +14,7 @@
 
 ## Run Container
 
-    docker run -p 9092:9092 -p 8080:8080 button-football
+    docker run -p 8080:8080 button-football
 
 ## Database Backup
 
