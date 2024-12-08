@@ -44,7 +44,7 @@ private fun Application.installCors() {
     }
 }
 
-fun Application.configureSerialization() {
+private fun Application.configureSerialization() {
     install(ContentNegotiation) {
         json()
     }
@@ -56,7 +56,7 @@ fun Application.configureSerialization() {
     }
 }
 
-fun Application.configureApis() {
+private fun Application.configureApis() {
     configureTeamApi()
     configureUserApi()
 }

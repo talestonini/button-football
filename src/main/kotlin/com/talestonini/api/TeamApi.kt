@@ -8,17 +8,18 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureTeamApi() {
-   val teamService = TeamService(getDatabase())
+    val teamService = TeamService(getDatabase())
 
-   routing {
-      get("/teams") {
-         val name = call.queryParameters["name"] ?: throw IllegalArgumentException("Missing team name")
-         val team = teamService.readByName(name)
-         if (team != null) {
-            call.respond(HttpStatusCode.OK, team)
-         } else {
-            call.respond(HttpStatusCode.NotFound)
-         }
-      }
-   }
+    routing {
+        get("/teams") {
+            val name = call.queryParameters["name"]
+            val teams = teamService.read(name)
+            if (teams != null) {
+                call.respond(HttpStatusCode.OK, teams)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+    }
+
 }

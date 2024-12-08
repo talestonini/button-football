@@ -9,12 +9,11 @@ data class ExposedTeam(val id: Int, val name: String, val type: String, val full
     val city: String, val country: String, val logoImgFile: String)
 
 class TeamService(database: Database) : BaseService() {
-    suspend fun readByName(name: String): ExposedTeam? {
+    suspend fun read(name: String?): List<ExposedTeam?> {
         return dbQuery {
             Team.all()
-                .filter { it.name == name }
+                .filter { if (name != null) it.name == name else true }
                 .map { teamMapper(it) }
-                .singleOrNull()
         }
     }
 
