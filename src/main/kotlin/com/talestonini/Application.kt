@@ -1,7 +1,6 @@
 package com.talestonini
 
-import com.talestonini.api.configureTeamApi
-import com.talestonini.api.configureUserApi
+import com.talestonini.api.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -57,6 +56,8 @@ private fun Application.configureSerialization() {
 }
 
 private fun Application.configureApis() {
+    configureTeamTypeApi()
+    configureChampionshipTypeApi()
     configureTeamApi()
     configureUserApi()
 }
