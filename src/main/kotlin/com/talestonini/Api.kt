@@ -9,25 +9,16 @@ import io.ktor.server.routing.*
 fun Application.configureButtonFootballApi() {
     val database = getDatabase()
     val teamTypeService = TeamTypeService(database)
-    val teamService = TeamService(database)
     val championshipTypeService = ChampionshipTypeService(database)
     val championshipService = ChampionshipService(database)
+    val matchTypeService = MatchTypeService(database)
     val matchService = MatchService(database)
+    val teamService = TeamService(database)
 
     routing {
         get("/teamTypes") {
             val code = call.queryParameters["code"]
             val teams = teamTypeService.read(code)
-            if (teams.isNotEmpty()) {
-                call.respond(HttpStatusCode.OK, teams)
-            } else {
-                call.respond(HttpStatusCode.NotFound)
-            }
-        }
-
-        get("/teams") {
-            val name = call.queryParameters["name"]
-            val teams = teamService.read(name)
             if (teams.isNotEmpty()) {
                 call.respond(HttpStatusCode.OK, teams)
             } else {
@@ -56,6 +47,16 @@ fun Application.configureButtonFootballApi() {
             }
         }
 
+        get("/matchTypes") {
+            val codMatchType = call.queryParameters["codMatchType"]
+            val matchTypes = matchTypeService.read(codMatchType)
+            if (matchTypes.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, matchTypes)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
         get("/championships/{id}/matches") {
             val championshipId =
                 call.parameters["id"]?.toInt() ?: throw IllegalStateException("missing championship id")
@@ -63,6 +64,16 @@ fun Application.configureButtonFootballApi() {
             val matches = matchService.read(championshipId, codMatchType)
             if (matches.isNotEmpty()) {
                 call.respond(HttpStatusCode.OK, matches)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
+        get("/teams") {
+            val name = call.queryParameters["name"]
+            val teams = teamService.read(name)
+            if (teams.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, teams)
             } else {
                 call.respond(HttpStatusCode.NotFound)
             }
