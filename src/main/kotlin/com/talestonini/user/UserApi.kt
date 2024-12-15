@@ -1,8 +1,6 @@
-package com.talestonini.api
+package com.talestonini.user
 
 import com.talestonini.getDatabase
-import com.talestonini.service.ExposedUser
-import com.talestonini.service.UserService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*

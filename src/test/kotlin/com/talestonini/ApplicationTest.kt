@@ -1,7 +1,6 @@
 package com.talestonini
 
-import com.talestonini.api.configureTeamApi
-import com.talestonini.api.configureUserApi
+import com.talestonini.user.configureUserApi
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -43,7 +42,7 @@ class ApplicationTest {
             config = YamlConfigLoader().load("application.yaml")!!
         }
         application {
-            configureTeamApi()
+            configureButtonFootballApi()
         }
         client.get("/teams?name=Corinthians").apply {
             assertEquals(HttpStatusCode.OK, status)

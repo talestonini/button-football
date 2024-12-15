@@ -1,4 +1,4 @@
-package com.talestonini.model
+package com.talestonini.user
 
 import org.jetbrains.exposed.sql.Table
 

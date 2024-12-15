@@ -1,6 +1,6 @@
-package com.talestonini.service
+package com.talestonini.user
 
-import com.talestonini.model.UsersTable
+import com.talestonini.service.BaseService
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
