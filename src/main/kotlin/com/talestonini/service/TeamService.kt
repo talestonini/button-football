@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.Database
 
 @Serializable
 data class ExposedTeam(val id: Int, val name: String, val type: String, val fullName: String, val foundation: String,
-    val city: String, val country: String, val logoImgFile: String)
+                       val city: String, val country: String, val logoImgFile: String)
 
 class TeamService(database: Database) : BaseService() {
     suspend fun read(name: String?): List<ExposedTeam?> {

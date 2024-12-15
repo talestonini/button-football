@@ -6,9 +6,15 @@ import org.jetbrains.exposed.sql.Database
 
 @Serializable
 data class ExposedChampionshipType(val id: Int, val code: String, val description: String, val numEditions: Int,
-    val logoImgFile: String)
+                                   val logoImgFile: String)
 
 class ChampionshipTypeService(database: Database) : BaseService() {
+    suspend fun read(id: Int): ExposedChampionshipType {
+        return dbQuery {
+            championshipTypeMapper(ChampionshipType[id])
+        }
+    }
+
     suspend fun read(codTeamType: String?): List<ExposedChampionshipType?> {
         return dbQuery {
             ChampionshipType.all()

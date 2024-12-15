@@ -1,5 +1,6 @@
 package com.talestonini.model
 
+import com.talestonini.model.TeamsTable.nullable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -30,8 +31,8 @@ class Match(id: EntityID<Int>) : IntEntity(id) {
     var teamB by Team referencedOn MatchesTable.idTeamB
     var numGoalsTeamA by MatchesTable.numGoalsTeamA
     var numGoalsTeamB by MatchesTable.numGoalsTeamB
-    var numGoalsExtraA by MatchesTable.numGoalsExtraA
-    var numGoalsExtraB by MatchesTable.numGoalsExtraB
-    var numGoalsPntA by MatchesTable.numGoalsPntA
-    var numGoalsPntB by MatchesTable.numGoalsPntB
+    var numGoalsExtraA by MatchesTable.numGoalsExtraA.nullable()
+    var numGoalsExtraB by MatchesTable.numGoalsExtraB.nullable()
+    var numGoalsPntA by MatchesTable.numGoalsPntA.nullable()
+    var numGoalsPntB by MatchesTable.numGoalsPntB.nullable()
 }

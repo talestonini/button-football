@@ -14,7 +14,7 @@ fun Application.configureTeamTypeApi() {
         get("/teamTypes") {
             val code = call.queryParameters["code"]
             val teams = teamTypeService.read(code)
-            if (teams != null) {
+            if (teams.isNotEmpty()) {
                 call.respond(HttpStatusCode.OK, teams)
             } else {
                 call.respond(HttpStatusCode.NotFound)
