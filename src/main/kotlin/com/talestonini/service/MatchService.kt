@@ -12,10 +12,10 @@ data class ExposedMatch(val id: Int, val championship: String, val edition: Int,
                         val numGoalsExtraB: Int?, val numGoalsPntA: Int?, val numGoalsPntB: Int?)
 
 class MatchService(database: Database) : BaseService() {
-    suspend fun read(championshipId: Int, codMatchType: String?): List<ExposedMatch?> {
+    suspend fun read(championshipId: Int, codMatchType: List<String>?): List<ExposedMatch?> {
         return dbQuery {
             Match.find { MatchesTable.idChampionship eq championshipId }
-                .filter { if (codMatchType != null) it.type.code == codMatchType else true }
+                .filter { if (codMatchType?.isNotEmpty() == true) codMatchType.contains(it.type.code) else true }
                 .sortedBy { it.id.value }
                 .map { matchMapper(it) }
         }

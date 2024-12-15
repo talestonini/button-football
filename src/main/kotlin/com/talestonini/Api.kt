@@ -60,8 +60,8 @@ fun Application.configureButtonFootballApi() {
         get("/championships/{id}/matches") {
             val championshipId =
                 call.parameters["id"]?.toInt() ?: throw IllegalStateException("missing championship id")
-            val codMatchType = call.queryParameters["codMatchType"]
-            val matches = matchService.read(championshipId, codMatchType)
+            val codMatchTypes = call.queryParameters["codMatchTypes"]?.split(",")
+            val matches = matchService.read(championshipId, codMatchTypes)
             if (matches.isNotEmpty()) {
                 call.respond(HttpStatusCode.OK, matches)
             } else {
