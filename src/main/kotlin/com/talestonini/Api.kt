@@ -47,6 +47,16 @@ fun Application.configureButtonFootballApi() {
             }
         }
 
+        get("/championships") {
+            val codChampionshipType = call.queryParameters["codChampionshipType"]
+            val championships = championshipService.read(codChampionshipType)
+            if (championships.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, championships)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
         get("/matchTypes") {
             val codMatchType = call.queryParameters["codMatchType"]
             val matchTypes = matchTypeService.read(codMatchType)
