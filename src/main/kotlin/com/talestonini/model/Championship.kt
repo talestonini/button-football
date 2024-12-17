@@ -1,5 +1,6 @@
 package com.talestonini.model
 
+import com.talestonini.model.ChampionshipsTable.nullable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -24,7 +25,7 @@ class Championship(id: EntityID<Int>) : IntEntity(id) {
     var type by ChampionshipType referencedOn ChampionshipsTable.codType
     var numEdition by ChampionshipsTable.numEdition
     var dtCreation by ChampionshipsTable.dtCreation
-    var dtEnd by ChampionshipsTable.dtEnd
+    var dtEnd by ChampionshipsTable.dtEnd.nullable()
     var numTeams by ChampionshipsTable.numTeams
     var numQualif by ChampionshipsTable.numQualif
     var status by ChampionshipStatus referencedOn ChampionshipsTable.codStatus

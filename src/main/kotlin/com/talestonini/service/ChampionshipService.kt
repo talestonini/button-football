@@ -32,7 +32,7 @@ class ChampionshipService(database: Database) : BaseService() {
             championship.type.teamType.description,
             championship.numEdition,
             championship.dtCreation,
-            championship.dtEnd,
+            championship?.dtEnd,
             championship.numTeams,
             championship.numQualif,
             championship.status.description
