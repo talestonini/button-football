@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
 @Serializable
-data class ExposedMatch(val id: Int, val championship: String, val edition: Int, val type: String, val teamA: String,
-                        val teamALogoImgFile: String, val teamB: String, val teamBLogoImgFile: String,
+data class ExposedMatch(val id: Int, val championship: String, val numEdition: Int, val type: String, val teamA: String,
+                        val teamB: String, val teamALogoImgFile: String, val teamBLogoImgFile: String,
                         val numGoalsTeamA: Int, val numGoalsTeamB: Int, val numGoalsExtraA: Int?,
                         val numGoalsExtraB: Int?, val numGoalsPntA: Int?, val numGoalsPntB: Int?)
 
@@ -28,8 +28,8 @@ class MatchService(database: Database) : BaseService() {
             match.championship.numEdition,
             match.type.description,
             match.teamA.name,
-            match.teamA.logoImgFile,
             match.teamB.name,
+            match.teamA.logoImgFile,
             match.teamB.logoImgFile,
             match.numGoalsTeamA,
             match.numGoalsTeamB,
