@@ -13,6 +13,7 @@ fun Application.configureButtonFootballApi() {
     val championshipService = ChampionshipService(database)
     val matchTypeService = MatchTypeService(database)
     val matchService = MatchService(database)
+    val standingService = StandingService(database)
     val teamService = TeamService(database)
 
     routing {
@@ -74,6 +75,17 @@ fun Application.configureButtonFootballApi() {
             val matches = matchService.read(championshipId, codMatchTypes)
             if (matches.isNotEmpty()) {
                 call.respond(HttpStatusCode.OK, matches)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
+        get("/championships/{id}/groupStandings") {
+            val championshipId =
+                call.parameters["id"]?.toInt() ?: throw IllegalStateException("missing championship id")
+            val standings = standingService.read(championshipId, ('A'..'Z').map { g -> "Grupo $g" })
+            if (standings.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, standings)
             } else {
                 call.respond(HttpStatusCode.NotFound)
             }
