@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.Database
 
 @Serializable
 data class ExposedStanding(val id: Int, val championship: String, val team: String, val type: String,
-                           val numIntraGrpPos: Int?, val numExtraGrpPos: Int?, val numFinalPost: Int?,
+                           val numIntraGrpPos: Int?, val numExtraGrpPos: Int?, val numFinalPos: Int?,
                            val numPoints: Int, val numMatches: Int, val numWins: Int, val numDraws: Int,
                            val numLosses: Int, val numGoalsScored: Int, val numGoalsConceded: Int,
                            val numGoalDiff: Int)
