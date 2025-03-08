@@ -13,7 +13,7 @@ data class ExposedStanding(val id: Int, val championship: String, val team: Stri
                            val numGoalDiff: Int)
 
 class StandingService(database: Database) : BaseService() {
-    suspend fun read(championshipId: Int, matchTypes: List<String>? = null): List<ExposedStanding?> {
+    suspend fun read(championshipId: Int, matchTypes: List<String>? = emptyList()): List<ExposedStanding?> {
         return dbQuery {
             Standing.find { StandingsTable.idChampionship eq championshipId }
                 .filter {

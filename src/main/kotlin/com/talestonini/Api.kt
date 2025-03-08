@@ -80,6 +80,17 @@ fun Application.configureButtonFootballApi() {
             }
         }
 
+        get("/championships/{id}/standings") {
+            val championshipId =
+                call.parameters["id"]?.toInt() ?: throw IllegalStateException("missing championship id")
+            val standings = standingService.read(championshipId)
+            if (standings.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, standings)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
         get("/championships/{id}/groupStandings") {
             val championshipId =
                 call.parameters["id"]?.toInt() ?: throw IllegalStateException("missing championship id")
@@ -94,10 +105,9 @@ fun Application.configureButtonFootballApi() {
         get("/championships/{id}/finalStandings") {
             val championshipId =
                 call.parameters["id"]?.toInt() ?: throw IllegalStateException("missing championship id")
-            val groupStandings = standingService.read(championshipId, ('A'..'Z').map { g -> "Grupo $g" })
-            val finalStandings = standingService.read(championshipId).minus(groupStandings.toSet())
-            if (finalStandings.isNotEmpty()) {
-                call.respond(HttpStatusCode.OK, finalStandings)
+            val standings = standingService.read(championshipId, listOf("Final"))
+            if (standings.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, standings)
             } else {
                 call.respond(HttpStatusCode.NotFound)
             }
