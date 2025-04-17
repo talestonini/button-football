@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
 @Serializable
-data class ExposedStanding(val id: Int, val championship: String, val team: String, val type: String,
-                           val numIntraGrpPos: Int?, val numExtraGrpPos: Int?, val numFinalPos: Int?,
-                           val numPoints: Int, val numMatches: Int, val numWins: Int, val numDraws: Int,
-                           val numLosses: Int, val numGoalsScored: Int, val numGoalsConceded: Int,
-                           val numGoalsDiff: Int)
+data class ExposedStanding(val id: Int, val championship: String, val edition: Int, val team: String,
+                           val teamLogoImgFile: String, val type: String, val numIntraGrpPos: Int?,
+                           val numExtraGrpPos: Int?, val numFinalPos: Int?, val numPoints: Int, val numMatches: Int,
+                           val numWins: Int, val numDraws: Int, val numLosses: Int, val numGoalsScored: Int,
+                           val numGoalsConceded: Int, val numGoalsDiff: Int)
 
 class StandingService(database: Database) : BaseService() {
     suspend fun read(championshipId: Int, matchTypes: List<String>? = emptyList()): List<ExposedStanding?> {
@@ -28,7 +28,9 @@ class StandingService(database: Database) : BaseService() {
         ExposedStanding(
             standing.id.value,
             standing.championship.type.description,
+            standing.championship.numEdition,
             standing.team.name,
+            standing.team.logoImgFile,
             standing.matchType.description,
             standing?.numIntraGrpPos,
             standing?.numExtraGrpPos,

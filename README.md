@@ -22,6 +22,4 @@
 
 ## TODOs/FIXMEs
 
-- In standings, the championship field is just the championship type, missing the edition.
-- If standings is joined with teams, we can bring the team logo filename from backend, so that frontend does not need
-  to perform that join.
+N/A
