@@ -10,7 +10,7 @@ data class ExposedStanding(val id: Int, val championship: String, val team: Stri
                            val numIntraGrpPos: Int?, val numExtraGrpPos: Int?, val numFinalPos: Int?,
                            val numPoints: Int, val numMatches: Int, val numWins: Int, val numDraws: Int,
                            val numLosses: Int, val numGoalsScored: Int, val numGoalsConceded: Int,
-                           val numGoalDiff: Int)
+                           val numGoalsDiff: Int)
 
 class StandingService(database: Database) : BaseService() {
     suspend fun read(championshipId: Int, matchTypes: List<String>? = emptyList()): List<ExposedStanding?> {
@@ -40,6 +40,6 @@ class StandingService(database: Database) : BaseService() {
             standing.numLosses,
             standing.numGoalsScored,
             standing.numGoalsConceded,
-            standing.numGoalDiff
+            standing.numGoalsDiff
         )
 }

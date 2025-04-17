@@ -20,7 +20,7 @@ object StandingsTable : IntIdTable() {
     val numLosses = integer("NUM_LOSSES")
     val numGoalsScored = integer("NUM_GOALS_SCORED")
     val numGoalsConceded = integer("NUM_GOALS_CONCEDED")
-    val numGoalDiff = integer("NUM_GOAL_DIFF")
+    val numGoalsDiff = integer("NUM_GOALS_DIFF")
 
     override val tableName: String
         get() = "STANDING"
@@ -42,5 +42,5 @@ class Standing(id: EntityID<Int>) : IntEntity(id) {
     var numLosses by StandingsTable.numLosses
     var numGoalsScored by StandingsTable.numGoalsScored
     var numGoalsConceded by StandingsTable.numGoalsConceded
-    var numGoalDiff by StandingsTable.numGoalDiff
+    var numGoalsDiff by StandingsTable.numGoalsDiff
 }
