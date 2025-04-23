@@ -3,17 +3,17 @@ ktor:
 
   dev:
     db:
-      url: 'jdbc:h2:./h2/db/buttonfootball'
-      driver: org.h2.Driver
-      user: sa
-      password: buttonfootball
+      url: $DEV_DB_URL
+      driver: $DEV_DB_DRIVER
+      user: $DEV_DB_USER
+      password: $DEV_DB_PASSWORD
 
   prod:
     db:
-      url: 'jdbc:h2:tcp://34.67.166.86:9092/buttonfootball'
-      driver: org.h2.Driver
-      user: sa
-      password: buttonfootball
+      url: $PROD_DB_URL
+      driver: $PROD_DB_DRIVER
+      user: $PROD_DB_USER
+      password: $PROD_DB_PASSWORD
 
   application:
     modules:

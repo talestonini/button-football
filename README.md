@@ -2,6 +2,7 @@
 
 ## Dev Run
 
+    source set_env.sh
     ./gradlew clean run
 
 ## Fat JAR
@@ -25,7 +26,7 @@
     java -cp h2*.jar org.h2.tools.Backup -file "./h2dbbkp/h2-button-football-backup.zip" -dir "./h2db" -db "buttonfootball"
 
 **NOTE**: The command above is actually not in use.  Backups are taken from the server in GCP and stored in the database
-repo (https://github.com/talestonini/button-football-db).
+repo.
 
 ## TODOs/FIXMEs
 
