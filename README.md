@@ -15,7 +15,7 @@
 
 ## Run Container
 
-    docker run -p 8080:8080 button-football
+    docker run -p 8080:8080 --env-file .env button-football
 
 ## Run Database Locally
 
