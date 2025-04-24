@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
@@ -23,8 +25,26 @@ dependencies {
     implementation(libs.logback.classic)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
+    testImplementation("net.jqwik:jqwik-kotlin:1.9.2")
+    testImplementation("net.jqwik:jqwik:1.9.2")
 }
 
 kotlin {
     jvmToolchain(21)
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
+
+tasks.withType<KotlinCompile> {
+    compilerOptions {
+        freeCompilerArgs = listOf(
+            "-Xnullability-annotations=@org.jspecify.annotations:strict",
+            "-Xemit-jvm-type-annotations" // Enable annotations on type variables
+        )
+        apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
+        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
+        javaParameters = true // Get correct parameter names in jqwik reporting
+    }
 }
