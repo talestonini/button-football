@@ -8,7 +8,9 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.config.yaml.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.testing.*
-import kotlin.test.*
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
 class ApplicationTest {
 
@@ -23,7 +25,7 @@ class ApplicationTest {
         }
     }
 
-    @Ignore
+    @Disabled
     @Test
     fun testReadUser() = testApplication {
         application {

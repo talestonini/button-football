@@ -25,8 +25,8 @@ dependencies {
     implementation(libs.logback.classic)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
-    testImplementation("net.jqwik:jqwik-kotlin:1.9.2")
     testImplementation("net.jqwik:jqwik:1.9.2")
+    testImplementation("net.jqwik:jqwik-kotlin:1.9.2")
 }
 
 kotlin {

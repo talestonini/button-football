@@ -5,27 +5,11 @@ import net.jqwik.api.Arbitraries
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.Provide
 import net.jqwik.kotlin.api.any
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.transaction
 
-abstract class PropertyBasedTest {
+abstract class PropertyBasedTest : BaseTest() {
 
-    private fun initDatabase() =
-        Database.connect(
-            url = "jdbc:h2:./h2/db/buttonfootball",
-            driver = "org.h2.Driver",
-            user = "sa",
-            password = "buttonfootball"
-        )
-
-    private fun <T> arbitrariesOf(fn: () -> List<T>): Arbitrary<T> {
-        initDatabase()
-        var res: Arbitrary<T> = Arbitraries.of()
-        transaction {
-            res = Arbitraries.of(fn())
-        }
-        return res
-    }
+    private fun <T> arbitrariesOf(fn: () -> List<T>): Arbitrary<T> =
+        Arbitraries.of(fromDb { fn() })
 
     @Provide
     fun matchTypes(): Arbitrary<String> =

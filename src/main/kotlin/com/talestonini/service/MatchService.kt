@@ -73,25 +73,27 @@ class MatchService(database: Database) : BaseService() {
             Match.find { MatchesTable.idChampionship eq championshipId }
                 .filter { if (codMatchType?.isNotEmpty() == true) codMatchType.contains(it.type.code) else true }
                 .sortedBy { it.id.value }
-                .map { matchMapper(it) }
+                .map { toExposedMatch(it) }
         }
     }
 
-    private fun matchMapper(match: Match): ExposedMatch =
-        ExposedMatch(
-            match.id.value,
-            match.championship.type.description,
-            match.championship.numEdition,
-            match.type.description,
-            match.teamA.name,
-            match.teamB.name,
-            match.teamA.logoImgFile,
-            match.teamB.logoImgFile,
-            match?.numGoalsTeamA,
-            match?.numGoalsTeamB,
-            match?.numGoalsExtraA,
-            match?.numGoalsExtraB,
-            match?.numGoalsPntA,
-            match?.numGoalsPntB
-        )
+    companion object {
+        fun toExposedMatch(match: Match): ExposedMatch =
+            ExposedMatch(
+                match.id.value,
+                match.championship.type.description,
+                match.championship.numEdition,
+                match.type.description,
+                match.teamA.name,
+                match.teamB.name,
+                match.teamA.logoImgFile,
+                match.teamB.logoImgFile,
+                match?.numGoalsTeamA,
+                match?.numGoalsTeamB,
+                match?.numGoalsExtraA,
+                match?.numGoalsExtraB,
+                match?.numGoalsPntA,
+                match?.numGoalsPntB
+            )
+    }
 }

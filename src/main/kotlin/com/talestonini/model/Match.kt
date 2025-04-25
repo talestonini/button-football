@@ -35,4 +35,6 @@ class Match(id: EntityID<Int>) : IntEntity(id) {
     var numGoalsExtraB by MatchesTable.numGoalsExtraB.nullable()
     var numGoalsPntA by MatchesTable.numGoalsPntA.nullable()
     var numGoalsPntB by MatchesTable.numGoalsPntB.nullable()
+
+    override fun toString() = id.toString()
 }

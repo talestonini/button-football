@@ -28,6 +28,7 @@ class MatchServiceTest : PropertyBasedTest() {
             null
         )
         if (match.isValidScores()) {
+            assertEquals(MatchState.PLAYED, match.matchState())
             assertNotNull(match.winner())
             assertNotNull(match.looser())
         } else {
@@ -47,6 +48,7 @@ class MatchServiceTest : PropertyBasedTest() {
             numGoalsExtraA, numGoalsExtraB, null, null
         )
         if (match.isValidScores()) {
+            assertEquals(MatchState.PLAYED, match.matchState())
             assertNotNull(match.winner())
             assertNotNull(match.looser())
         } else {
@@ -67,6 +69,7 @@ class MatchServiceTest : PropertyBasedTest() {
             numGoalsExtraTime, numGoalsExtraTime, numGoalsPntA, numGoalsPntB
         )
         if (match.isValidScores()) {
+            assertEquals(MatchState.PLAYED, match.matchState())
             assertNotNull(match.winner())
             assertNotNull(match.looser())
         } else {
