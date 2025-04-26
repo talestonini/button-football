@@ -10,7 +10,7 @@ class MatchServiceTest : PropertyBasedTest() {
 
     @Property
     fun `an unplayed match has always valid scores`(@ForAll("matchTypes") matchType: String) {
-        val match = ExposedMatch(
+        val match = ExpMatch(
             0, "aChampionship", 1, matchType, "teamA", "teamB", "", "", null, null, null, null, null, null
         )
         assertEquals(MatchState.UNPLAYED, match.matchState())
@@ -23,7 +23,7 @@ class MatchServiceTest : PropertyBasedTest() {
         @ForAll("scores") numGoalsTeamA: Int,
         @ForAll("scores") numGoalsTeamB: Int,
     ) {
-        val match = ExposedMatch(
+        val match = ExpMatch(
             0, "aChampionship", 1, matchType, "teamA", "teamB", "", "", numGoalsTeamA, numGoalsTeamB, null, null, null,
             null
         )
@@ -43,7 +43,7 @@ class MatchServiceTest : PropertyBasedTest() {
         @ForAll("scores") numGoalsExtraA: Int,
         @ForAll("scores") numGoalsExtraB: Int,
     ) {
-        val match = ExposedMatch(
+        val match = ExpMatch(
             0, "aChampionship", 1, matchType, "teamA", "teamB", "", "", numGoalsFullTime, numGoalsFullTime,
             numGoalsExtraA, numGoalsExtraB, null, null
         )
@@ -64,7 +64,7 @@ class MatchServiceTest : PropertyBasedTest() {
         @ForAll("scores") numGoalsPntA: Int,
         @ForAll("scores") numGoalsPntB: Int,
     ) {
-        val match = ExposedMatch(
+        val match = ExpMatch(
             0, "aChampionship", 1, matchType, "teamA", "teamB", "", "", numGoalsFullTime, numGoalsFullTime,
             numGoalsExtraTime, numGoalsExtraTime, numGoalsPntA, numGoalsPntB
         )

@@ -18,4 +18,6 @@ class TeamType(id: EntityID<Int>) : IntEntity(id) {
 
     var code by TeamTypesTable.code
     var description by TeamTypesTable.description
+
+    override fun toString() = description
 }

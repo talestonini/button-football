@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
 @Serializable
-data class ExposedMatch(val id: Int, val championship: String, val numEdition: Int, val type: String, val teamA: String,
-                        val teamB: String, val teamALogoImgFile: String, val teamBLogoImgFile: String,
-                        val numGoalsTeamA: Int?, val numGoalsTeamB: Int?, val numGoalsExtraA: Int?,
-                        val numGoalsExtraB: Int?, val numGoalsPntA: Int?, val numGoalsPntB: Int?) {
+data class ExpMatch(val id: Int, val championship: String, val numEdition: Int, val type: String, val teamA: String,
+                    val teamB: String, val teamALogoImgFile: String, val teamBLogoImgFile: String,
+                    val numGoalsTeamA: Int?, val numGoalsTeamB: Int?, val numGoalsExtraA: Int?,
+                    val numGoalsExtraB: Int?, val numGoalsPntA: Int?, val numGoalsPntB: Int?) {
 
     private fun isFullTimeScoreNull(): Boolean = numGoalsTeamA == null && numGoalsTeamB == null
     private fun isExtraTimeScoreNull(): Boolean = numGoalsExtraA == null && numGoalsExtraB == null
@@ -68,18 +68,18 @@ enum class MatchState {
 }
 
 class MatchService(database: Database) : BaseService() {
-    suspend fun read(championshipId: Int, codMatchType: List<String>?): List<ExposedMatch?> {
+    suspend fun read(championshipId: Int, codMatchType: List<String>?): List<ExpMatch?> {
         return dbQuery {
             Match.find { MatchesTable.idChampionship eq championshipId }
                 .filter { if (codMatchType?.isNotEmpty() == true) codMatchType.contains(it.type.code) else true }
                 .sortedBy { it.id.value }
-                .map { toExposedMatch(it) }
+                .map { toExpMatch(it) }
         }
     }
 
     companion object {
-        fun toExposedMatch(match: Match): ExposedMatch =
-            ExposedMatch(
+        fun toExpMatch(match: Match): ExpMatch =
+            ExpMatch(
                 match.id.value,
                 match.championship.type.description,
                 match.championship.numEdition,

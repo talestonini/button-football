@@ -18,4 +18,6 @@ class ChampionshipStatus(id: EntityID<Int>) : IntEntity(id) {
 
     var code by ChampionshipStatusesTable.code
     var description by ChampionshipStatusesTable.description
+
+    override fun toString() = description
 }

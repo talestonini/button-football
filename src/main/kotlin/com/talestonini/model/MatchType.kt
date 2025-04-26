@@ -18,4 +18,6 @@ class MatchType(id: EntityID<Int>) : IntEntity(id) {
 
     var code by MatchTypesTable.code
     var description by MatchTypesTable.description
+
+    override fun toString() = description
 }

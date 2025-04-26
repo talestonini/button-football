@@ -18,4 +18,6 @@ class Country(id: EntityID<Int>) : IntEntity(id) {
 
     var code by CountriesTable.code
     var name by CountriesTable.name
+
+    override fun toString() = name
 }

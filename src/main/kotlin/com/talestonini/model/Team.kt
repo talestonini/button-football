@@ -28,4 +28,6 @@ class Team(id: EntityID<Int>) : IntEntity(id) {
     var city by TeamsTable.city
     var country by Country referencedOn TeamsTable.codCountry
     var logoImgFile by TeamsTable.logoImgFile
+
+    override fun toString() = name
 }

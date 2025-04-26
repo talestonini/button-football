@@ -5,21 +5,23 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
 @Serializable
-data class ExposedMatchType(val id: Int, val code: String, val description: String)
+data class ExpMatchType(val id: Int, val code: String, val description: String)
 
 class MatchTypeService(database: Database) : BaseService() {
-    suspend fun read(code: String?): List<ExposedMatchType?> {
+    suspend fun read(code: String?): List<ExpMatchType?> {
         return dbQuery {
             MatchType.all()
                 .filter { if (code != null) it.code == code else true }
-                .map { matchTypeMapper(it) }
+                .map { toExpMatchType(it) }
         }
     }
 
-    private fun matchTypeMapper(matchType: MatchType): ExposedMatchType =
-        ExposedMatchType(
-            matchType.id.value,
-            matchType.code,
-            matchType.description
-        )
+    companion object {
+        fun toExpMatchType(matchType: MatchType): ExpMatchType =
+            ExpMatchType(
+                matchType.id.value,
+                matchType.code,
+                matchType.description
+            )
+    }
 }

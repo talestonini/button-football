@@ -43,4 +43,6 @@ class Standing(id: EntityID<Int>) : IntEntity(id) {
     var numGoalsScored by StandingsTable.numGoalsScored
     var numGoalsConceded by StandingsTable.numGoalsConceded
     var numGoalsDiff by StandingsTable.numGoalsDiff
+
+    override fun toString() = id.toString()
 }

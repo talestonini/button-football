@@ -29,4 +29,6 @@ class Championship(id: EntityID<Int>) : IntEntity(id) {
     var numTeams by ChampionshipsTable.numTeams
     var numQualif by ChampionshipsTable.numQualif
     var status by ChampionshipStatus referencedOn ChampionshipsTable.codStatus
+
+    override fun toString() = "${ChampionshipsTable.codType}-$numEdition"
 }

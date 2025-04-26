@@ -26,4 +26,6 @@ class ChampionshipType(id: EntityID<Int>) : IntEntity(id) {
     var numEditions by ChampionshipTypesTable.numEditions
     var listOrder by ChampionshipTypesTable.listOrder
     var logoImgFile by ChampionshipTypesTable.logoImgFile
+
+    override fun toString() = description
 }
