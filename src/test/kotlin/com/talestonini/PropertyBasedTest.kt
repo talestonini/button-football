@@ -9,11 +9,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 abstract class PropertyBasedTest : BaseTest() {
 
-    private fun <T> arbitrariesFromDb(fn: () -> List<T>): Arbitrary<T> {
+    private fun <T> arbitrariesFromDb(dbQuery: () -> List<T>): Arbitrary<T> {
         database()
         var res = emptyList<T>()
         transaction {
-            res = fn()
+            res = dbQuery()
         }
         return Arbitraries.of(res)
     }

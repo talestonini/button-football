@@ -6,10 +6,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 abstract class BaseDataTest : BaseTest() {
 
-    fun dataTest(fn: () -> Unit) = testApplication {
+    fun dataTest(block: () -> Unit) = testApplication {
         database()
         transaction {
-            fn()
+            block()
         }
     }
 
