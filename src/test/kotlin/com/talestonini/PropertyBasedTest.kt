@@ -1,6 +1,8 @@
 package com.talestonini
 
-import com.talestonini.model.MatchType
+import com.talestonini.model.MatchTypeEntity
+import com.talestonini.service.MatchType
+import com.talestonini.service.MatchTypeService
 import net.jqwik.api.Arbitraries
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.Provide
@@ -19,21 +21,26 @@ abstract class PropertyBasedTest : BaseTest() {
     }
 
     @Provide
-    fun matchTypes(): Arbitrary<String> =
+    fun matchTypes(): Arbitrary<MatchType> =
         arbitrariesFromDb {
-            MatchType.all().map { it.description }
+            MatchTypeEntity.all()
+                .map { MatchTypeService.toMatchType(it) }
         }
 
     @Provide
-    fun groupStageMatchTypes(): Arbitrary<String> =
+    fun groupStageMatchTypes(): Arbitrary<MatchType> =
         arbitrariesFromDb {
-            MatchType.all().filter { it.code.lowercase().startsWith("g") }.map { it.description }
+            MatchTypeEntity.all()
+                .filter { it.code.lowercase().startsWith("g") }
+                .map { MatchTypeService.toMatchType(it) }
         }
 
     @Provide
-    fun finalsMatchTypes(): Arbitrary<String> =
+    fun finalsMatchTypes(): Arbitrary<MatchType> =
         arbitrariesFromDb {
-            MatchType.all().filter { !it.code.lowercase().startsWith("g") }.map { it.description }
+            MatchTypeEntity.all()
+                .filter { !it.code.lowercase().startsWith("g") }
+                .map { MatchTypeService.toMatchType(it) }
         }
 
     @Provide

@@ -1,49 +1,78 @@
 package com.talestonini.service
 
-import com.talestonini.model.Standing
+import com.talestonini.model.StandingEntity
 import com.talestonini.model.StandingsTable
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
+data class Standing(val championship: Championship, val team: Team, val type: MatchType, val numIntraGrpPos: Int?,
+                    val numExtraGrpPos: Int?, val numFinalPos: Int?, val numPoints: Int, val numMatches: Int,
+                    val numWins: Int, val numDraws: Int, val numLosses: Int, val numGoalsScored: Int,
+                    val numGoalsConceded: Int, val numGoalsDiff: Int)
+
 @Serializable
-data class ExpStanding(val id: Int, val championship: String, val edition: Int, val team: String,
-                       val teamLogoImgFile: String, val type: String, val numIntraGrpPos: Int?,
-                       val numExtraGrpPos: Int?, val numFinalPos: Int?, val numPoints: Int, val numMatches: Int,
-                       val numWins: Int, val numDraws: Int, val numLosses: Int, val numGoalsScored: Int,
-                       val numGoalsConceded: Int, val numGoalsDiff: Int)
+data class StandingApiView(val id: Int, val championship: String, val edition: Int, val team: String,
+                           val teamLogoImgFile: String, val type: String, val numIntraGrpPos: Int?,
+                           val numExtraGrpPos: Int?, val numFinalPos: Int?, val numPoints: Int, val numMatches: Int,
+                           val numWins: Int, val numDraws: Int, val numLosses: Int, val numGoalsScored: Int,
+                           val numGoalsConceded: Int, val numGoalsDiff: Int)
 
 class StandingService(database: Database) : BaseService() {
-    suspend fun read(championshipId: Int, matchTypes: List<String>? = emptyList()): List<ExpStanding?> {
+
+    companion object {
+        fun toStanding(standingEntity: StandingEntity): Standing =
+            Standing(
+                ChampionshipService.toChampionship(standingEntity.championshipEntity),
+                TeamService.toTeam(standingEntity.teamEntity),
+                MatchTypeService.toMatchType(standingEntity.matchTypeEntity),
+                standingEntity?.numIntraGrpPos,
+                standingEntity?.numExtraGrpPos,
+                standingEntity?.numFinalPos,
+                standingEntity.numPoints,
+                standingEntity.numMatches,
+                standingEntity.numWins,
+                standingEntity.numDraws,
+                standingEntity.numLosses,
+                standingEntity.numGoalsScored,
+                standingEntity.numGoalsConceded,
+                standingEntity.numGoalsDiff
+            )
+
+        fun toStandingApiView(standingEntity: StandingEntity): StandingApiView =
+            StandingApiView(
+                standingEntity.id.value,
+                standingEntity.championshipEntity.type.description,
+                standingEntity.championshipEntity.numEdition,
+                standingEntity.teamEntity.name,
+                standingEntity.teamEntity.logoImgFile,
+                standingEntity.matchTypeEntity.description,
+                standingEntity?.numIntraGrpPos,
+                standingEntity?.numExtraGrpPos,
+                standingEntity?.numFinalPos,
+                standingEntity.numPoints,
+                standingEntity.numMatches,
+                standingEntity.numWins,
+                standingEntity.numDraws,
+                standingEntity.numLosses,
+                standingEntity.numGoalsScored,
+                standingEntity.numGoalsConceded,
+                standingEntity.numGoalsDiff
+            )
+    }
+
+    suspend fun read(championshipId: Int, matchTypes: List<String>? = emptyList()): List<StandingApiView?> {
         return dbQuery {
-            Standing.find { StandingsTable.idChampionship eq championshipId }
+            StandingEntity.find { StandingsTable.idChampionship eq championshipId }
                 .filter {
-                    if (matchTypes?.isNotEmpty() == true) matchTypes.contains(it.matchType.description) else true
+                    if (matchTypes?.isNotEmpty() == true) matchTypes.contains(it.matchTypeEntity.description) else true
                 }
-                .sortedWith(compareBy(Standing::numFinalPos, Standing::numExtraGrpPos, Standing::numIntraGrpPos))
-                .map { toExpStanding(it) }
+                .sortedWith(compareBy(
+                    StandingEntity::numFinalPos,
+                    StandingEntity::numExtraGrpPos,
+                    StandingEntity::numIntraGrpPos
+                ))
+                .map { toStandingApiView(it) }
         }
     }
 
-    companion object {
-        fun toExpStanding(standing: Standing): ExpStanding =
-            ExpStanding(
-                standing.id.value,
-                standing.championship.type.description,
-                standing.championship.numEdition,
-                standing.team.name,
-                standing.team.logoImgFile,
-                standing.matchType.description,
-                standing?.numIntraGrpPos,
-                standing?.numExtraGrpPos,
-                standing?.numFinalPos,
-                standing.numPoints,
-                standing.numMatches,
-                standing.numWins,
-                standing.numDraws,
-                standing.numLosses,
-                standing.numGoalsScored,
-                standing.numGoalsConceded,
-                standing.numGoalsDiff
-            )
-    }
 }

@@ -1,33 +1,49 @@
 package com.talestonini.service
 
-import com.talestonini.model.Team
+import com.talestonini.model.TeamEntity
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
+data class Team(val name: String, val type: TeamType, val fullName: String, val foundation: String, val city: String,
+                val country: Country, val logoImgFile: String)
+
 @Serializable
-data class ExpTeam(val id: Int, val name: String, val type: String, val fullName: String, val foundation: String,
-                   val city: String, val country: String, val logoImgFile: String)
+data class TeamApiView(val id: Int, val name: String, val type: String, val fullName: String, val foundation: String,
+                       val city: String, val country: String, val logoImgFile: String)
 
 class TeamService(database: Database) : BaseService() {
-    suspend fun read(name: String?): List<ExpTeam?> {
+
+    companion object {
+        fun toTeam(teamEntity: TeamEntity): Team =
+            Team(
+                teamEntity.name,
+                TeamTypeService.toTeamType(teamEntity.type),
+                teamEntity.fullName,
+                teamEntity.foundation,
+                teamEntity.city,
+                CountryService.toCountry(teamEntity.country),
+                teamEntity.logoImgFile
+            )
+
+        fun toTeamApiView(teamEntity: TeamEntity): TeamApiView =
+            TeamApiView(
+                teamEntity.id.value,
+                teamEntity.name,
+                teamEntity.type.description,
+                teamEntity.fullName,
+                teamEntity.foundation,
+                teamEntity.city,
+                teamEntity.country.name,
+                teamEntity.logoImgFile
+            )
+    }
+
+    suspend fun read(name: String?): List<TeamApiView?> {
         return dbQuery {
-            Team.all()
+            TeamEntity.all()
                 .filter { if (name != null) it.name == name else true }
-                .map { toExpTeam(it) }
+                .map { toTeamApiView(it) }
         }
     }
 
-    companion object {
-        fun toExpTeam(team: Team): ExpTeam =
-            ExpTeam(
-                team.id.value,
-                team.name,
-                team.type.description,
-                team.fullName,
-                team.foundation,
-                team.city,
-                team.country.name,
-                team.logoImgFile
-            )
-    }
 }

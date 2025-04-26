@@ -1,42 +1,58 @@
 package com.talestonini.service
 
-import com.talestonini.model.Championship
+import com.talestonini.model.ChampionshipEntity
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
+data class Championship(val type: ChampionshipType, val numEdition: Int, val dtCreation: String, val dtEnd: String?,
+                        val numTeams: Int, val numQualif: Int, val status: ChampionshipStatus)
+
 @Serializable
-data class ExpChampionship(val id: Int, val type: String, val teamType: String, val numEdition: Int,
-                           val dtCreation: String, val dtEnd: String?, val numTeams: Int, val numQualif: Int,
-                           val status: String)
+data class ChampionshipApiView(val id: Int, val type: String, val teamType: String, val numEdition: Int,
+                               val dtCreation: String, val dtEnd: String?, val numTeams: Int, val numQualif: Int,
+                               val status: String)
 
 class ChampionshipService(database: Database) : BaseService() {
-    suspend fun read(id: Int): ExpChampionship {
-        return dbQuery {
-            toExpChampionship(Championship[id])
-        }
-    }
-
-    suspend fun read(codChampionshipType: String?): List<ExpChampionship?> {
-        return dbQuery {
-            Championship.all()
-                .filter { if (codChampionshipType != null) it.type.code == codChampionshipType else true }
-                .sortedBy { it.numEdition }
-                .map { toExpChampionship(it) }
-        }
-    }
 
     companion object {
-        fun toExpChampionship(championship: Championship): ExpChampionship =
-            ExpChampionship(
-                championship.id.value,
-                championship.type.description,
-                championship.type.teamType.description,
-                championship.numEdition,
-                championship.dtCreation,
-                championship?.dtEnd,
-                championship.numTeams,
-                championship.numQualif,
-                championship.status.description
+        fun toChampionship(championshipEntity: ChampionshipEntity): Championship =
+            Championship(
+                ChampionshipTypeService.toChampionshipType(championshipEntity.type),
+                championshipEntity.numEdition,
+                championshipEntity.dtCreation,
+                championshipEntity?.dtEnd,
+                championshipEntity.numTeams,
+                championshipEntity.numQualif,
+                ChampionshipStatusService.toChampionshipStatus(championshipEntity.status)
+            )
+
+        fun toChampionshipApiView(championshipEntity: ChampionshipEntity): ChampionshipApiView =
+            ChampionshipApiView(
+                championshipEntity.id.value,
+                championshipEntity.type.description,
+                championshipEntity.type.teamTypeEntity.description,
+                championshipEntity.numEdition,
+                championshipEntity.dtCreation,
+                championshipEntity?.dtEnd,
+                championshipEntity.numTeams,
+                championshipEntity.numQualif,
+                championshipEntity.status.description
             )
     }
+
+    suspend fun read(id: Int): ChampionshipApiView {
+        return dbQuery {
+            toChampionshipApiView(ChampionshipEntity[id])
+        }
+    }
+
+    suspend fun read(codChampionshipType: String?): List<ChampionshipApiView?> {
+        return dbQuery {
+            ChampionshipEntity.all()
+                .filter { if (codChampionshipType != null) it.type.code == codChampionshipType else true }
+                .sortedBy { it.numEdition }
+                .map { toChampionshipApiView(it) }
+        }
+    }
+
 }

@@ -1,37 +1,49 @@
 package com.talestonini.service
 
-import com.talestonini.model.ChampionshipType
+import com.talestonini.model.ChampionshipTypeEntity
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
+data class ChampionshipType(val code: String, val description: String, val numEditions: Int, val logoImgFile: String)
+
 @Serializable
-data class ExpChampionshipType(val id: Int, val code: String, val description: String, val numEditions: Int,
-                               val logoImgFile: String)
+data class ChampionshipTypeApiView(val id: Int, val code: String, val description: String, val numEditions: Int,
+                                   val logoImgFile: String)
 
 class ChampionshipTypeService(database: Database) : BaseService() {
-    suspend fun read(id: Int): ExpChampionshipType {
-        return dbQuery {
-            toExpChampionshipType(ChampionshipType[id])
-        }
-    }
-
-    suspend fun read(codTeamType: String?): List<ExpChampionshipType?> {
-        return dbQuery {
-            ChampionshipType.all()
-                .filter { if (codTeamType != null) it.teamType.code == codTeamType else true }
-                .sortedBy { it.listOrder }
-                .map { toExpChampionshipType(it) }
-        }
-    }
 
     companion object {
-        fun toExpChampionshipType(championshipType: ChampionshipType): ExpChampionshipType =
-            ExpChampionshipType(
-                championshipType.id.value,
-                championshipType.code,
-                championshipType.description,
-                championshipType.numEditions,
-                championshipType.logoImgFile
+        fun toChampionshipType(championshipTypeEntity: ChampionshipTypeEntity): ChampionshipType =
+            ChampionshipType(
+                championshipTypeEntity.code,
+                championshipTypeEntity.description,
+                championshipTypeEntity.numEditions,
+                championshipTypeEntity.logoImgFile
+            )
+
+        fun toChampionshipTypeApiView(championshipTypeEntity: ChampionshipTypeEntity): ChampionshipTypeApiView =
+            ChampionshipTypeApiView(
+                championshipTypeEntity.id.value,
+                championshipTypeEntity.code,
+                championshipTypeEntity.description,
+                championshipTypeEntity.numEditions,
+                championshipTypeEntity.logoImgFile
             )
     }
+
+    suspend fun read(id: Int): ChampionshipTypeApiView {
+        return dbQuery {
+            toChampionshipTypeApiView(ChampionshipTypeEntity[id])
+        }
+    }
+
+    suspend fun read(codTeamType: String?): List<ChampionshipTypeApiView?> {
+        return dbQuery {
+            ChampionshipTypeEntity.all()
+                .filter { if (codTeamType != null) it.teamTypeEntity.code == codTeamType else true }
+                .sortedBy { it.listOrder }
+                .map { toChampionshipTypeApiView(it) }
+        }
+    }
+
 }

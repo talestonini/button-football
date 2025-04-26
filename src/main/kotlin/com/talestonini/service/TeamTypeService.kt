@@ -1,27 +1,37 @@
 package com.talestonini.service
 
-import com.talestonini.model.TeamType
+import com.talestonini.model.TeamTypeEntity
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
+data class TeamType(val code: String, val description: String)
+
 @Serializable
-data class ExpTeamType(val id: Int, val code: String, val description: String)
+data class TeamTypeApiView(val id: Int, val code: String, val description: String)
 
 class TeamTypeService(database: Database) : BaseService() {
-    suspend fun read(code: String?): List<ExpTeamType?> {
+
+    companion object {
+        fun toTeamType(teamTypeEntity: TeamTypeEntity): TeamType =
+            TeamType(
+                teamTypeEntity.code,
+                teamTypeEntity.description
+            )
+
+        fun toTeamTypeApiView(teamTypeEntity: TeamTypeEntity): TeamTypeApiView =
+            TeamTypeApiView(
+                teamTypeEntity.id.value,
+                teamTypeEntity.code,
+                teamTypeEntity.description
+            )
+    }
+
+    suspend fun read(code: String?): List<TeamTypeApiView?> {
         return dbQuery {
-            TeamType.all()
+            TeamTypeEntity.all()
                 .filter { if (code != null) it.code == code else true }
-                .map { toExpTeamType(it) }
+                .map { toTeamTypeApiView(it) }
         }
     }
 
-    companion object {
-        fun toExpTeamType(teamType: TeamType): ExpTeamType =
-            ExpTeamType(
-                teamType.id.value,
-                teamType.code,
-                teamType.description
-            )
-    }
 }

@@ -1,15 +1,17 @@
 package com.talestonini.service
 
-import com.talestonini.model.Match
+import com.talestonini.model.MatchEntity
 import com.talestonini.model.MatchesTable
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
-@Serializable
-data class ExpMatch(val id: Int, val championship: String, val numEdition: Int, val type: String, val teamA: String,
-                    val teamB: String, val teamALogoImgFile: String, val teamBLogoImgFile: String,
-                    val numGoalsTeamA: Int?, val numGoalsTeamB: Int?, val numGoalsExtraA: Int?,
-                    val numGoalsExtraB: Int?, val numGoalsPntA: Int?, val numGoalsPntB: Int?) {
+enum class MatchState {
+    PLAYED, UNPLAYED
+}
+
+data class Match(val championship: Championship, val type: MatchType, val teamA: Team, val teamB: Team,
+                 val numGoalsTeamA: Int?, val numGoalsTeamB: Int?, val numGoalsExtraA: Int?, val numGoalsExtraB: Int?,
+                 val numGoalsPntA: Int?, val numGoalsPntB: Int?) {
 
     private fun isFullTimeScoreNull(): Boolean = numGoalsTeamA == null && numGoalsTeamB == null
     private fun isExtraTimeScoreNull(): Boolean = numGoalsExtraA == null && numGoalsExtraB == null
@@ -41,10 +43,10 @@ data class ExpMatch(val id: Int, val championship: String, val numEdition: Int, 
         return if (isAllScoresNull()) MatchState.UNPLAYED else MatchState.PLAYED
     }
 
-    fun isGroupStageMatch(): Boolean = type.lowercase().startsWith("g")
+    fun isGroupStageMatch(): Boolean = type.code.lowercase().startsWith("g")
     fun isFinalsMatch(): Boolean = !isGroupStageMatch()
 
-    fun winner(): String? {
+    fun winner(): Team? {
         assert(isValidScores())
         return if ("${numGoalsPntA ?: 0}${numGoalsExtraA ?: 0}${numGoalsTeamA ?: 0}".toInt() >
             "${numGoalsPntB ?: 0}${numGoalsExtraB ?: 0}${numGoalsTeamB ?: 0}".toInt()
@@ -55,7 +57,7 @@ data class ExpMatch(val id: Int, val championship: String, val numEdition: Int, 
         else null
     }
 
-    fun looser(): String? =
+    fun looser(): Team? =
         when (winner()) {
             teamA -> teamB
             teamB -> teamA
@@ -63,37 +65,55 @@ data class ExpMatch(val id: Int, val championship: String, val numEdition: Int, 
         }
 }
 
-enum class MatchState {
-    PLAYED, UNPLAYED
-}
+@Serializable
+data class MatchApiView(val id: Int, val championship: String, val numEdition: Int, val type: String, val teamA: String,
+                        val teamB: String, val teamALogoImgFile: String, val teamBLogoImgFile: String,
+                        val numGoalsTeamA: Int?, val numGoalsTeamB: Int?, val numGoalsExtraA: Int?,
+                        val numGoalsExtraB: Int?, val numGoalsPntA: Int?, val numGoalsPntB: Int?)
 
 class MatchService(database: Database) : BaseService() {
-    suspend fun read(championshipId: Int, codMatchType: List<String>?): List<ExpMatch?> {
+
+    companion object {
+        fun toMatch(matchEntity: MatchEntity): Match =
+            Match(
+                ChampionshipService.toChampionship(matchEntity.championshipEntity),
+                MatchTypeService.toMatchType(matchEntity.type),
+                TeamService.toTeam(matchEntity.teamEntityA),
+                TeamService.toTeam(matchEntity.teamEntityB),
+                matchEntity?.numGoalsTeamA,
+                matchEntity?.numGoalsTeamB,
+                matchEntity?.numGoalsExtraA,
+                matchEntity?.numGoalsExtraB,
+                matchEntity?.numGoalsPntA,
+                matchEntity?.numGoalsPntB
+            )
+
+        fun toMatchApiView(matchEntity: MatchEntity): MatchApiView =
+            MatchApiView(
+                matchEntity.id.value,
+                matchEntity.championshipEntity.type.description,
+                matchEntity.championshipEntity.numEdition,
+                matchEntity.type.description,
+                matchEntity.teamEntityA.name,
+                matchEntity.teamEntityB.name,
+                matchEntity.teamEntityA.logoImgFile,
+                matchEntity.teamEntityB.logoImgFile,
+                matchEntity?.numGoalsTeamA,
+                matchEntity?.numGoalsTeamB,
+                matchEntity?.numGoalsExtraA,
+                matchEntity?.numGoalsExtraB,
+                matchEntity?.numGoalsPntA,
+                matchEntity?.numGoalsPntB
+            )
+    }
+
+    suspend fun read(championshipId: Int, codMatchType: List<String>?): List<MatchApiView?> {
         return dbQuery {
-            Match.find { MatchesTable.idChampionship eq championshipId }
+            MatchEntity.find { MatchesTable.idChampionship eq championshipId }
                 .filter { if (codMatchType?.isNotEmpty() == true) codMatchType.contains(it.type.code) else true }
                 .sortedBy { it.id.value }
-                .map { toExpMatch(it) }
+                .map { toMatchApiView(it) }
         }
     }
 
-    companion object {
-        fun toExpMatch(match: Match): ExpMatch =
-            ExpMatch(
-                match.id.value,
-                match.championship.type.description,
-                match.championship.numEdition,
-                match.type.description,
-                match.teamA.name,
-                match.teamB.name,
-                match.teamA.logoImgFile,
-                match.teamB.logoImgFile,
-                match?.numGoalsTeamA,
-                match?.numGoalsTeamB,
-                match?.numGoalsExtraA,
-                match?.numGoalsExtraB,
-                match?.numGoalsPntA,
-                match?.numGoalsPntB
-            )
-    }
 }
