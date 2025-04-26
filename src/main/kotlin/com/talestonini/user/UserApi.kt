@@ -1,6 +1,6 @@
 package com.talestonini.user
 
-import com.talestonini.getDatabase
+import com.talestonini.database
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -8,7 +8,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureUserApi() {
-    val userService = UserService(getDatabase())
+    val userService = UserService(database())
 
     routing {
         // Create user

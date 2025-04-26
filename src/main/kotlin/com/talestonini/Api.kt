@@ -7,7 +7,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureButtonFootballApi() {
-    val database = getDatabase()
+    val database = database()
     val teamTypeService = TeamTypeService(database)
     val championshipTypeService = ChampionshipTypeService(database)
     val championshipService = ChampionshipService(database)
