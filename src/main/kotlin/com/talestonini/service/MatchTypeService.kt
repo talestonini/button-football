@@ -4,7 +4,9 @@ import com.talestonini.model.MatchTypeEntity
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
-data class MatchType(val code: String, val description: String)
+data class MatchType(val id: Int?, val code: String, val description: String) {
+    constructor(code: String, description: String) : this(null, code, description)
+}
 
 @Serializable
 data class MatchTypeApiView(val id: Int, val code: String, val description: String)

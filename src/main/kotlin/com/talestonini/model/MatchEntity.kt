@@ -25,10 +25,10 @@ object MatchesTable : IntIdTable() {
 class MatchEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<MatchEntity>(MatchesTable)
 
-    var championshipEntity by ChampionshipEntity referencedOn MatchesTable.idChampionship
+    var championship by ChampionshipEntity referencedOn MatchesTable.idChampionship
     var type by MatchTypeEntity referencedOn MatchesTable.codType
-    var teamEntityA by TeamEntity referencedOn MatchesTable.idTeamA
-    var teamEntityB by TeamEntity referencedOn MatchesTable.idTeamB
+    var teamA by TeamEntity referencedOn MatchesTable.idTeamA
+    var teamB by TeamEntity referencedOn MatchesTable.idTeamB
     var numGoalsTeamA by MatchesTable.numGoalsTeamA.nullable()
     var numGoalsTeamB by MatchesTable.numGoalsTeamB.nullable()
     var numGoalsExtraA by MatchesTable.numGoalsExtraA.nullable()

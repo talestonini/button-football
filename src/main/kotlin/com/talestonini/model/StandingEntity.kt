@@ -29,9 +29,9 @@ object StandingsTable : IntIdTable() {
 class StandingEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<StandingEntity>(StandingsTable)
 
-    var championshipEntity by ChampionshipEntity referencedOn StandingsTable.idChampionship
-    var teamEntity by TeamEntity referencedOn StandingsTable.idTeam
-    var matchTypeEntity by MatchTypeEntity referencedOn StandingsTable.codMatchType
+    var championship by ChampionshipEntity referencedOn StandingsTable.idChampionship
+    var team by TeamEntity referencedOn StandingsTable.idTeam
+    var matchType by MatchTypeEntity referencedOn StandingsTable.codMatchType
     var numIntraGrpPos by StandingsTable.numIntraGrpPos.nullable()
     var numExtraGrpPos by StandingsTable.numExtraGrpPos.nullable()
     var numFinalPos by StandingsTable.numFinalPos.nullable()

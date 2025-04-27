@@ -4,7 +4,9 @@ import com.talestonini.model.TeamTypeEntity
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
-data class TeamType(val code: String, val description: String)
+data class TeamType(val id: Int?, val code: String, val description: String) {
+    constructor(code: String, description: String) : this(null, code, description)
+}
 
 @Serializable
 data class TeamTypeApiView(val id: Int, val code: String, val description: String)

@@ -3,7 +3,9 @@ package com.talestonini.service
 import com.talestonini.model.CountryEntity
 import kotlinx.serialization.Serializable
 
-data class Country(val code: String, val name: String)
+data class Country(val id: Int?, val code: String, val name: String) {
+    constructor(code: String, name: String) : this(null, code, name)
+}
 
 @Serializable
 data class CountryApiView(val id: Int, val code: String, val name: String)

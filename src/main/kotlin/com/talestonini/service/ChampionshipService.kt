@@ -4,13 +4,21 @@ import com.talestonini.model.ChampionshipEntity
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
-data class Championship(val type: ChampionshipType, val numEdition: Int, val dtCreation: String, val dtEnd: String?,
-                        val numTeams: Int, val numQualif: Int, val status: ChampionshipStatus)
+data class Championship(
+    val id: Int?, val type: ChampionshipType, val numEdition: Int, val dtCreation: String, val dtEnd: String?,
+    val numTeams: Int, val numQualif: Int, val status: ChampionshipStatus,
+) {
+    constructor(
+        type: ChampionshipType, numEdition: Int, dtCreation: String, dtEnd: String?, numTeams: Int,
+        numQualif: Int, status: ChampionshipStatus,
+    ) : this(null, type, numEdition, dtCreation, dtEnd, numTeams, numQualif, status)
+}
 
 @Serializable
-data class ChampionshipApiView(val id: Int, val type: String, val teamType: String, val numEdition: Int,
-                               val dtCreation: String, val dtEnd: String?, val numTeams: Int, val numQualif: Int,
-                               val status: String)
+data class ChampionshipApiView(
+    val id: Int, val type: String, val teamType: String, val numEdition: Int, val dtCreation: String,
+    val dtEnd: String?, val numTeams: Int, val numQualif: Int, val status: String,
+)
 
 class ChampionshipService(database: Database) : BaseService() {
 
@@ -30,7 +38,7 @@ class ChampionshipService(database: Database) : BaseService() {
             ChampionshipApiView(
                 championshipEntity.id.value,
                 championshipEntity.type.description,
-                championshipEntity.type.teamTypeEntity.description,
+                championshipEntity.type.teamType.description,
                 championshipEntity.numEdition,
                 championshipEntity.dtCreation,
                 championshipEntity?.dtEnd,

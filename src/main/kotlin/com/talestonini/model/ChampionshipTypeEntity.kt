@@ -22,7 +22,7 @@ class ChampionshipTypeEntity(id: EntityID<Int>) : IntEntity(id) {
 
     var code by ChampionshipTypesTable.code
     var description by ChampionshipTypesTable.description
-    var teamTypeEntity by TeamTypeEntity referencedOn ChampionshipTypesTable.codTeamType
+    var teamType by TeamTypeEntity referencedOn ChampionshipTypesTable.codTeamType
     var numEditions by ChampionshipTypesTable.numEditions
     var listOrder by ChampionshipTypesTable.listOrder
     var logoImgFile by ChampionshipTypesTable.logoImgFile

@@ -4,11 +4,17 @@ import com.talestonini.model.ChampionshipTypeEntity
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 
-data class ChampionshipType(val code: String, val description: String, val numEditions: Int, val logoImgFile: String)
+data class ChampionshipType(
+    val id: Int?, val code: String, val description: String, val numEditions: Int, val logoImgFile: String,
+) {
+    constructor(code: String, description: String, numEditions: Int, logoImgFile: String) :
+            this(null, code, description, numEditions, logoImgFile)
+}
 
 @Serializable
-data class ChampionshipTypeApiView(val id: Int, val code: String, val description: String, val numEditions: Int,
-                                   val logoImgFile: String)
+data class ChampionshipTypeApiView(
+    val id: Int, val code: String, val description: String, val numEditions: Int, val logoImgFile: String,
+)
 
 class ChampionshipTypeService(database: Database) : BaseService() {
 
@@ -40,7 +46,7 @@ class ChampionshipTypeService(database: Database) : BaseService() {
     suspend fun read(codTeamType: String?): List<ChampionshipTypeApiView?> {
         return dbQuery {
             ChampionshipTypeEntity.all()
-                .filter { if (codTeamType != null) it.teamTypeEntity.code == codTeamType else true }
+                .filter { if (codTeamType != null) it.teamType.code == codTeamType else true }
                 .sortedBy { it.listOrder }
                 .map { toChampionshipTypeApiView(it) }
         }

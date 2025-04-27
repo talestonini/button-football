@@ -9,9 +9,20 @@ enum class MatchState {
     PLAYED, UNPLAYED
 }
 
-data class Match(val championship: Championship, val type: MatchType, val teamA: Team, val teamB: Team,
-                 val numGoalsTeamA: Int?, val numGoalsTeamB: Int?, val numGoalsExtraA: Int?, val numGoalsExtraB: Int?,
-                 val numGoalsPntA: Int?, val numGoalsPntB: Int?) {
+data class Match(
+    val id: Int?, val championship: Championship, val type: MatchType, val teamA: Team, val teamB: Team,
+    val numGoalsTeamA: Int?, val numGoalsTeamB: Int?, val numGoalsExtraA: Int?, val numGoalsExtraB: Int?,
+    val numGoalsPntA: Int?, val numGoalsPntB: Int?,
+) {
+
+    constructor(
+        championship: Championship, type: MatchType, teamA: Team, teamB: Team, numGoalsTeamA: Int?,
+        numGoalsTeamB: Int?, numGoalsExtraA: Int?, numGoalsExtraB: Int?, numGoalsPntA: Int?,
+        numGoalsPntB: Int?,
+    ) : this(
+        null, championship, type, teamA, teamB, numGoalsTeamA, numGoalsTeamB, numGoalsExtraA, numGoalsExtraB,
+        numGoalsPntA, numGoalsPntB
+    )
 
     private fun isFullTimeScoreNull(): Boolean = numGoalsTeamA == null && numGoalsTeamB == null
     private fun isExtraTimeScoreNull(): Boolean = numGoalsExtraA == null && numGoalsExtraB == null
@@ -66,20 +77,21 @@ data class Match(val championship: Championship, val type: MatchType, val teamA:
 }
 
 @Serializable
-data class MatchApiView(val id: Int, val championship: String, val numEdition: Int, val type: String, val teamA: String,
-                        val teamB: String, val teamALogoImgFile: String, val teamBLogoImgFile: String,
-                        val numGoalsTeamA: Int?, val numGoalsTeamB: Int?, val numGoalsExtraA: Int?,
-                        val numGoalsExtraB: Int?, val numGoalsPntA: Int?, val numGoalsPntB: Int?)
+data class MatchApiView(
+    val id: Int, val championship: String, val numEdition: Int, val type: String, val teamA: String, val teamB: String,
+    val teamALogoImgFile: String, val teamBLogoImgFile: String, val numGoalsTeamA: Int?, val numGoalsTeamB: Int?,
+    val numGoalsExtraA: Int?, val numGoalsExtraB: Int?, val numGoalsPntA: Int?, val numGoalsPntB: Int?,
+)
 
 class MatchService(database: Database) : BaseService() {
 
     companion object {
         fun toMatch(matchEntity: MatchEntity): Match =
             Match(
-                ChampionshipService.toChampionship(matchEntity.championshipEntity),
+                ChampionshipService.toChampionship(matchEntity.championship),
                 MatchTypeService.toMatchType(matchEntity.type),
-                TeamService.toTeam(matchEntity.teamEntityA),
-                TeamService.toTeam(matchEntity.teamEntityB),
+                TeamService.toTeam(matchEntity.teamA),
+                TeamService.toTeam(matchEntity.teamB),
                 matchEntity?.numGoalsTeamA,
                 matchEntity?.numGoalsTeamB,
                 matchEntity?.numGoalsExtraA,
@@ -91,13 +103,13 @@ class MatchService(database: Database) : BaseService() {
         fun toMatchApiView(matchEntity: MatchEntity): MatchApiView =
             MatchApiView(
                 matchEntity.id.value,
-                matchEntity.championshipEntity.type.description,
-                matchEntity.championshipEntity.numEdition,
+                matchEntity.championship.type.description,
+                matchEntity.championship.numEdition,
                 matchEntity.type.description,
-                matchEntity.teamEntityA.name,
-                matchEntity.teamEntityB.name,
-                matchEntity.teamEntityA.logoImgFile,
-                matchEntity.teamEntityB.logoImgFile,
+                matchEntity.teamA.name,
+                matchEntity.teamB.name,
+                matchEntity.teamA.logoImgFile,
+                matchEntity.teamB.logoImgFile,
                 matchEntity?.numGoalsTeamA,
                 matchEntity?.numGoalsTeamB,
                 matchEntity?.numGoalsExtraA,
