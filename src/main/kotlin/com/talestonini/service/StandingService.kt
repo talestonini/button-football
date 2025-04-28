@@ -7,24 +7,29 @@ import org.jetbrains.exposed.sql.Database
 
 data class Standing(
     val id: Int?, val championship: Championship, val team: Team, val type: MatchType, val numIntraGrpPos: Int?,
-    val numExtraGrpPos: Int?, val numFinalPos: Int?, val numPoints: Int, val numMatches: Int, val numWins: Int,
-    val numDraws: Int, val numLosses: Int, val numGoalsScored: Int, val numGoalsConceded: Int, val numGoalsDiff: Int,
-    val isIgpTied: Boolean = false
+    val numExtraGrpPos: Int?, val numFinalPos: Int?, val numWins: Int, val numDraws: Int, val numLosses: Int,
+    val numGoalsScored: Int, val numGoalsConceded: Int, val isIgpTied: Boolean = false
 ) {
     constructor(
         championship: Championship, team: Team, type: MatchType, numIntraGrpPos: Int?, numExtraGrpPos: Int?,
-        numFinalPos: Int?, numPoints: Int, numMatches: Int, numWins: Int, numDraws: Int, numLosses: Int,
-        numGoalsScored: Int, numGoalsConceded: Int, numGoalsDiff: Int, isIgpTied: Boolean = false
+        numFinalPos: Int?, numWins: Int, numDraws: Int, numLosses: Int, numGoalsScored: Int, numGoalsConceded: Int,
+        isIgpTied: Boolean = false
     ) : this(
-        null, championship, team, type, numIntraGrpPos, numExtraGrpPos, numFinalPos, numPoints, numMatches, numWins,
-        numDraws, numLosses, numGoalsScored, numGoalsConceded, numGoalsDiff, isIgpTied
+        null, championship, team, type, numIntraGrpPos, numExtraGrpPos, numFinalPos, numWins, numDraws, numLosses,
+        numGoalsScored, numGoalsConceded, isIgpTied
     )
 
-    constructor(toClone: Standing, numIntraGrpPos: Int?, isIgpTied: Boolean) : this(
-        toClone.id, toClone.championship, toClone.team, toClone.type, numIntraGrpPos, toClone.numExtraGrpPos,
-        toClone.numFinalPos, toClone.numPoints, toClone.numMatches, toClone.numWins, toClone.numDraws,
-        toClone.numLosses, toClone.numGoalsScored, toClone.numGoalsConceded, toClone.numGoalsDiff, isIgpTied
+    constructor(
+        toClone: Standing, numIntraGrpPos: Int?, numExtraGrpPos: Int?, numFinalPos: Int?, isIgpTied: Boolean,
+    ) : this(
+        toClone.id, toClone.championship, toClone.team, toClone.type, numIntraGrpPos, numExtraGrpPos, numFinalPos,
+        toClone.numWins, toClone.numDraws, toClone.numLosses, toClone.numGoalsScored, toClone.numGoalsConceded,
+        isIgpTied
     )
+
+    fun numPoints(): Int = Constants.NUM_POINTS_PER_WIN * numWins + Constants.NUM_POINTS_PER_DRAW * numDraws
+    fun numMatches(): Int = numWins + numDraws + numLosses
+    fun numGoalsDiff(): Int = numGoalsScored - numGoalsConceded
 }
 
 @Serializable
@@ -46,14 +51,11 @@ class StandingService(database: Database) : BaseService() {
                 standingEntity?.numIntraGrpPos,
                 standingEntity?.numExtraGrpPos,
                 standingEntity?.numFinalPos,
-                standingEntity.numPoints,
-                standingEntity.numMatches,
                 standingEntity.numWins,
                 standingEntity.numDraws,
                 standingEntity.numLosses,
                 standingEntity.numGoalsScored,
-                standingEntity.numGoalsConceded,
-                standingEntity.numGoalsDiff
+                standingEntity.numGoalsConceded
             )
 
         fun toStandingApiView(standingEntity: StandingEntity): StandingApiView =

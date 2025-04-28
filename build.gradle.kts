@@ -27,6 +27,7 @@ dependencies {
     testImplementation(libs.kotlin.test.junit)
     testImplementation("net.jqwik:jqwik:1.9.2")
     testImplementation("net.jqwik:jqwik-kotlin:1.9.2")
+    testImplementation("org.assertj:assertj-core:3.27.3")
 }
 
 kotlin {
