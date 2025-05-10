@@ -1,5 +1,7 @@
 package com.talestonini.service
 
+import kotlin.random.Random
+
 class ManagementService {
 
     companion object {
@@ -20,19 +22,21 @@ class ManagementService {
             val teamAWdl = wdl(match, match.teamA)
             val teamAStanding = Standing(
                 match.championship, match.teamA, match.type, null, null, null, teamAWdl.wins, teamAWdl.draws,
-                teamAWdl.losses, match.numGoalsTeamA ?: 0, match.numGoalsTeamB ?: 0
+                teamAWdl.losses, match.numGoalsTeamA ?: 0, match.numGoalsTeamB ?: 0, isIgpUntiedByHeadToHead = false,
+                isIgpUntiedRandomly = false
             )
 
             val teamBWdl = wdl(match, match.teamB)
             val teamBStanding = Standing(
                 match.championship, match.teamB, match.type, null, null, null, teamBWdl.wins, teamBWdl.draws,
-                teamBWdl.losses, match.numGoalsTeamB ?: 0, match.numGoalsTeamA ?: 0
+                teamBWdl.losses, match.numGoalsTeamB ?: 0, match.numGoalsTeamA ?: 0, isIgpUntiedByHeadToHead = false,
+                isIgpUntiedRandomly = false
             )
 
             return Pair(teamAStanding, teamBStanding)
         }
 
-        private fun isTiedByAllCriteria(st1: Standing, st2: Standing): Boolean =
+        fun isTiedByAllCriteria(st1: Standing, st2: Standing): Boolean =
             st1.numPoints() == st2.numPoints() &&
                     st1.numWins == st2.numWins &&
                     st1.numGoalsDiff() == st2.numGoalsDiff() &&
@@ -62,7 +66,9 @@ class ManagementService {
                             acc.numDraws + st.numDraws,
                             acc.numLosses + st.numLosses,
                             acc.numGoalsScored + st.numGoalsScored,
-                            acc.numGoalsConceded + st.numGoalsConceded
+                            acc.numGoalsConceded + st.numGoalsConceded,
+                            isIgpUntiedByHeadToHead = false,
+                            isIgpUntiedRandomly = false
                         )
                     }
                 }
@@ -80,21 +86,68 @@ class ManagementService {
             )
                 .withIndex()  // obtain a position number (0, 1, 2, 3)
                 .zipWithNext()  // pair adjacent teams standings ((0,1), (1,2), (2,3))
-                .flatMap {
-                    val isTied = isTiedByAllCriteria(it.first.value, it.second.value)
-                    listOf(
-                        Standing(it.first.value, it.first.index+1, null, null, isTied),
-                        Standing(it.second.value, it.second.index+1, null, null, isTied)
-                    )
-                }
+                .flatMap { processPossibleTiedGroupStandings(it, matches) }
                 .groupBy { it.team }  // standings in positions 2 and 3 will have duplicates, as per zipWithNext
                 .mapValues {
                     it.value.reduce { acc, st ->
-                        Standing(acc, acc.numIntraGrpPos, null, null, acc.isIgpTied || st.isIgpTied)  // de-dup
+                        if (acc.isIgpUntiedByHeadToHead && !st.isIgpUntiedByHeadToHead) acc
+                        else if (!acc.isIgpUntiedByHeadToHead && st.isIgpUntiedByHeadToHead) st
+                        else if (acc.isIgpUntiedRandomly && !st.isIgpUntiedRandomly) acc
+                        else if (!acc.isIgpUntiedRandomly && st.isIgpUntiedRandomly) st
+                        else acc  // either would be fine, as they are tied by all criteria, even head-to-head match
                     }
                 }
                 .map { it.value }  // discard the key created in groupBy and return
+                .sortedWith(compareBy(Standing::numIntraGrpPos))  // sort again, as possible tie may have been broken
                 .toSet()
+        }
+
+        private fun processPossibleTiedGroupStandings(
+            it: Pair<IndexedValue<Standing>, IndexedValue<Standing>>,
+            matches: Set<Match>,
+        ): List<Standing> {
+            fun findMatchBetweenTeams(teamA: Team, teamB: Team): Match =
+                matches.first {
+                    ((it.teamA.name == teamA.name && it.teamB.name == teamB.name) ||
+                            (it.teamA.name == teamB.name && it.teamB.name == teamA.name))
+                }
+
+            val isTied = isTiedByAllCriteria(it.first.value, it.second.value)
+
+            // to try and break the tie with the head-to-head match result
+            val winnerOfHeadToHeadMatch =
+                if (isTied) findMatchBetweenTeams(it.first.value.team, it.second.value.team).winner()
+                else null
+
+            return if (!isTied)
+                // standings are not tied or cannot be untied by the head-to-head match
+                listOf(
+                    Standing(it.first.value, it.first.index + 1, null, null),
+                    Standing(it.second.value, it.second.index + 1, null, null)
+                )
+            else if (winnerOfHeadToHeadMatch == null) {
+                val isFirstTeamToComeFirst = Random.nextBoolean()
+                val firstTeamPos  = if (isFirstTeamToComeFirst) it.first.index else it.second.index
+                val secondTeamPos = if (isFirstTeamToComeFirst) it.second.index else it.first.index
+                listOf(
+                    Standing(it.first.value, firstTeamPos + 1, null, null, isIgpUntiedRandomly = true),
+                    Standing(it.second.value, secondTeamPos + 1, null, null, isIgpUntiedRandomly = true)
+                )
+            } else
+                // standings are tied, but can be untied by the head-to-head match
+                if (winnerOfHeadToHeadMatch == it.first.value.team) {
+                    // keep order of both standings
+                    listOf(
+                        Standing(it.first.value, it.first.index + 1, null, null, isIgpUntiedByHeadToHead = true),
+                        Standing(it.second.value, it.second.index + 1, null, null, isIgpUntiedByHeadToHead = true)
+                    )
+                } else {
+                    // swap order of both standings
+                    listOf(
+                        Standing(it.second.value, it.first.index + 1, null, null, isIgpUntiedByHeadToHead = true),
+                        Standing(it.first.value, it.second.index + 1, null, null, isIgpUntiedByHeadToHead = true)
+                    )
+                }
         }
     }
 

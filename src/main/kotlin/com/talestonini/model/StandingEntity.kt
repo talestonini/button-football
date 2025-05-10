@@ -21,6 +21,8 @@ object StandingsTable : IntIdTable() {
     val numGoalsScored = integer("NUM_GOALS_SCORED")
     val numGoalsConceded = integer("NUM_GOALS_CONCEDED")
     val numGoalsDiff = integer("NUM_GOALS_DIFF")
+    val isIgpUntiedByHeadToHead = bool("IS_IGP_UNTIED_BY_H2H")
+    val isIgpUntiedRandomly = bool("IS_IGP_UNTIED_RANDOMLY")
 
     override val tableName: String
         get() = "STANDING"
@@ -43,6 +45,8 @@ class StandingEntity(id: EntityID<Int>) : IntEntity(id) {
     var numGoalsScored by StandingsTable.numGoalsScored
     var numGoalsConceded by StandingsTable.numGoalsConceded
     var numGoalsDiff by StandingsTable.numGoalsDiff
+    var isIgpUntiedByHeadToHead by StandingsTable.isIgpUntiedByHeadToHead
+    var isIgpUntiedRandomly by StandingsTable.isIgpUntiedRandomly
 
     override fun toString() = id.toString()
 }
