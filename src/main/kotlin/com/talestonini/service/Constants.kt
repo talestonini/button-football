@@ -6,6 +6,7 @@ class Constants {
         const val NUM_MATCHES_PER_GROUP = 6
         const val NUM_POINTS_PER_WIN = 3
         const val NUM_POINTS_PER_DRAW = 1
+        const val NUM_TEAMS_PER_GROUP = 4
     }
 
 }
