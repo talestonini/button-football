@@ -16,7 +16,7 @@ class GroupStandingsTest : BaseDataTest() {
     }
 
     @Test
-    fun `group standings should generate a standing per team in the group`() = dataTest {
+    fun `group standings should have group teams in their correct intra-group position`() = dataTest {
         ChampionshipEntity.all()
             .filter { it.status.description.lowercase() == "encerrado" }
             .forEach { c ->
@@ -27,7 +27,7 @@ class GroupStandingsTest : BaseDataTest() {
                         .filter { it.championship == c && it.type.code == "g$g" }
                         .map { MatchService.toMatch(it) }
                         .toSet()
-                    val calcStandings = ManagementService.groupStandings(matches)
+                    val calcStandings = ManagementService.processGroupStandings(matches)
 
                     val dbStandings = StandingEntity.all()
                         .filter { it.championship == c && it.matchType.code == "g$g" }
@@ -47,7 +47,7 @@ class GroupStandingsTest : BaseDataTest() {
                         // break tied positions will produce the same standings of the database
                         for (i in 1..RANDOMISATION_ATTEMPTS)
                             try {
-                                val calcStandingsAgain = ManagementService.groupStandings(matches)
+                                val calcStandingsAgain = ManagementService.processGroupStandings(matches)
                                 assertThat(dbStandings).containsExactlyElementsOf(calcStandingsAgain)
                                 break
                             } catch (e: AssertionError) {

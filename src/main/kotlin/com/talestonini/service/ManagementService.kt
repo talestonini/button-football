@@ -42,11 +42,11 @@ class ManagementService {
                     st1.numGoalsDiff() == st2.numGoalsDiff() &&
                     st1.numGoalsScored == st2.numGoalsScored
 
-        fun groupStandings(matches: Set<Match>): Set<Standing> {
-            ValidationService.validateGroupMatches(matches)
+        fun processGroupStandings(groupMatches: Set<Match>): Set<Standing> {
+            ValidationService.validateGroupMatches(groupMatches)
 
             // get match standings for each match
-            val standings: List<Standing> = matches.flatMap { m ->
+            val standings: List<Standing> = groupMatches.flatMap { m ->
                 val ms = matchStandings(m)
                 listOf(ms.first, ms.second)
             }
@@ -86,7 +86,7 @@ class ManagementService {
             )
                 .withIndex()  // obtain a position number (0, 1, 2, 3)
                 .zipWithNext()  // pair adjacent teams standings ((0,1), (1,2), (2,3))
-                .flatMap { processPossibleTiedGroupStandings(it, matches) }
+                .flatMap { processPossibleTiedIntraGroupStandings(it, groupMatches) }
                 .groupBy { it.team }  // standings in positions 2 and 3 will have duplicates, as per zipWithNext
                 .mapValues {
                     it.value.reduce { acc, st ->
@@ -102,12 +102,12 @@ class ManagementService {
                 .toSet()
         }
 
-        private fun processPossibleTiedGroupStandings(
+        private fun processPossibleTiedIntraGroupStandings(
             it: Pair<IndexedValue<Standing>, IndexedValue<Standing>>,
-            matches: Set<Match>,
+            groupMatches: Set<Match>,
         ): List<Standing> {
             fun findMatchBetweenTeams(teamA: Team, teamB: Team): Match =
-                matches.first {
+                groupMatches.first {
                     ((it.teamA.name == teamA.name && it.teamB.name == teamB.name) ||
                             (it.teamA.name == teamB.name && it.teamB.name == teamA.name))
                 }
