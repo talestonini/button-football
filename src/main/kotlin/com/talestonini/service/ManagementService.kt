@@ -1,17 +1,23 @@
 package com.talestonini.service
 
+import com.talestonini.datastructure.Tree
+import com.talestonini.service.ValidationService.Companion.validateSetOfChampionshipFinalsMatches
+import com.talestonini.service.ValidationService.Companion.validateSetOfChampionshipGroupStandings
+import com.talestonini.service.ValidationService.Companion.validateSetOfSingleGroupMatches
+import kotlin.math.ln
+import kotlin.math.pow
 import kotlin.random.Random
 
 class ManagementService {
-
     companion object {
+
         private data class WDL(val wins: Int, val draws: Int, val losses: Int)
 
         /**
          * Obtains points, wins, draws and losses for a team at a match.  In a single match, obviously, the number of
          * wins, draws and losses can only be 1.
          */
-        private fun wdl(match: Match, team: Team): WDL =
+        private fun winsDrawsLosses(match: Match, team: Team): WDL =
             when (match.winner()) {
                 team -> WDL(1, 0, 0)
                 null -> WDL(0, 1, 0)
@@ -19,35 +25,36 @@ class ManagementService {
             }
 
         fun matchStandings(match: Match): Pair<Standing, Standing> {
-            val teamAWdl = wdl(match, match.teamA)
+            val teamAWdl = winsDrawsLosses(match, match.teamA)
             val teamAStanding = Standing(
                 match.championship, match.teamA, match.type, null, null, null, teamAWdl.wins, teamAWdl.draws,
                 teamAWdl.losses, match.numGoalsTeamA ?: 0, match.numGoalsTeamB ?: 0, isIgpUntiedByHeadToHead = false,
-                isIgpUntiedRandomly = false, isEgpUntiedRandomly = false
+                isIgpUntiedRandomly = false, isEgpUntiedRandomly = false, isFpUntiedRandomly = false
             )
 
-            val teamBWdl = wdl(match, match.teamB)
+            val teamBWdl = winsDrawsLosses(match, match.teamB)
             val teamBStanding = Standing(
                 match.championship, match.teamB, match.type, null, null, null, teamBWdl.wins, teamBWdl.draws,
                 teamBWdl.losses, match.numGoalsTeamB ?: 0, match.numGoalsTeamA ?: 0, isIgpUntiedByHeadToHead = false,
-                isIgpUntiedRandomly = false, isEgpUntiedRandomly = false
+                isIgpUntiedRandomly = false, isEgpUntiedRandomly = false, isFpUntiedRandomly = false
             )
 
             return Pair(teamAStanding, teamBStanding)
         }
 
-        fun isTiedByAllCriteria(st1: Standing, st2: Standing): Boolean =
+        fun isTiedByAllCriteria(st1: Standing, st2: Standing, includeNumMatches: Boolean = false): Boolean =
             st1.numPoints() == st2.numPoints() &&
                     st1.numWins == st2.numWins &&
                     st1.numGoalsDiff() == st2.numGoalsDiff() &&
-                    st1.numGoalsScored == st2.numGoalsScored
+                    st1.numGoalsScored == st2.numGoalsScored &&
+                    (includeNumMatches && st1.numMatches() == st2.numMatches())
 
         /**
          * Processes intra-group standings for a single group of a championship, given the set of 6 matches of that
          * group.
          */
         fun processIntraGroupStandings(groupMatches: Set<Match>): Set<Standing> {
-            ValidationService.validateGroupMatches(groupMatches)
+            validateSetOfSingleGroupMatches(groupMatches)
 
             // get match standings for each match
             val standings: List<Standing> = groupMatches.flatMap { m ->
@@ -59,13 +66,16 @@ class ManagementService {
             val reducedStandings = standings.groupBy { it.team }
                 .mapValues {
                     it.value.reduce { acc, st ->
-                        Standing(acc.championship, acc.team, acc.type, null, null, null,
+                        Standing(
+                            acc.championship, acc.team, acc.type, null, null, null,
                             acc.numWins + st.numWins,
                             acc.numDraws + st.numDraws,
                             acc.numLosses + st.numLosses,
                             acc.numGoalsScored + st.numGoalsScored,
                             acc.numGoalsConceded + st.numGoalsConceded,
-                            isIgpUntiedByHeadToHead = false, isIgpUntiedRandomly = false, isEgpUntiedRandomly = false
+                            isIgpUntiedByHeadToHead = false, isIgpUntiedRandomly = false,
+                            isEgpUntiedRandomly = false,
+                            isFpUntiedRandomly = false
                         )
                     }
                 }
@@ -83,7 +93,7 @@ class ManagementService {
             )
                 .withIndex()  // obtain a position number (0, 1, 2, 3)
                 .zipWithNext()  // pair adjacent teams standings ((0,1), (1,2), (2,3))
-                .flatMap { processPossiblyTiedIntraGroupStanding(it, groupMatches) }
+                .flatMap { processPossiblyTiedIntraGroupStandings(it, groupMatches) }
                 .groupBy { it.team }  // standings in positions 2 and 3 will have duplicates, as per zipWithNext
                 .mapValues {
                     it.value.reduce { acc, st ->
@@ -99,7 +109,7 @@ class ManagementService {
                 .toSet()
         }
 
-        private fun processPossiblyTiedIntraGroupStanding(
+        private fun processPossiblyTiedIntraGroupStandings(
             it: Pair<IndexedValue<Standing>, IndexedValue<Standing>>,
             groupMatches: Set<Match>,
         ): List<Standing> {
@@ -124,7 +134,7 @@ class ManagementService {
                 )
             else if (winnerOfHeadToHeadMatch == null) {
                 val isFirstTeamToComeFirst = Random.nextBoolean()
-                val firstTeamPos  = if (isFirstTeamToComeFirst) it.first.index else it.second.index
+                val firstTeamPos = if (isFirstTeamToComeFirst) it.first.index else it.second.index
                 val secondTeamPos = if (isFirstTeamToComeFirst) it.second.index else it.first.index
                 listOf(
                     Standing(it.first.value, firstTeamPos + 1, null, null, isIgpUntiedRandomly = true),
@@ -150,10 +160,12 @@ class ManagementService {
         /**
          * Processes extra-group standings for a championship, given the group stage standings of all groups.
          */
-        fun processExtraGroupStandings(groupStageStandings: Set<Standing>): Set<Standing> {
-            ValidationService.validateGroupStandings(groupStageStandings)
+        fun processExtraGroupStandings(groupStandings: Set<Standing>): Set<Standing> {
+            validateSetOfChampionshipGroupStandings(groupStandings)
+            // group standings have intra-group ordering
+            groupStandings.all { it.numIntraGrpPos != null }
 
-            fun sortAllOfSameIntraGroupPosition(standings: Set<Standing>, startingPos: Int): Set<Standing> {
+            fun sortStandingsOfSameIntraGroupPosition(standings: Set<Standing>, startingPos: Int): Set<Standing> {
                 return standings.sortedWith(
                     compareBy(
                         Standing::numPoints,
@@ -179,11 +191,11 @@ class ManagementService {
                     .toSet()
             }
 
-            val numGroups = groupStageStandings.first().championship.numTeams/Constants.NUM_TEAMS_PER_GROUP
+            val numGroups = groupStandings.first().championship.numTeams / Constants.NUM_TEAMS_PER_GROUP
             return (1..Constants.NUM_TEAMS_PER_GROUP).map { igp ->
-                sortAllOfSameIntraGroupPosition(
-                    groupStageStandings.filter { it.numIntraGrpPos == igp }.toSet(),
-                    (igp-1) * numGroups + 1
+                sortStandingsOfSameIntraGroupPosition(
+                    groupStandings.filter { it.numIntraGrpPos == igp }.toSet(),
+                    (igp - 1) * numGroups + 1
                 )
             }.flatten().toSet()
         }
@@ -194,24 +206,152 @@ class ManagementService {
         ): List<Standing> =
             if (!isTiedByAllCriteria(it.first.value, it.second.value))
                 listOf(
-                    Standing(it.first.value, it.first.value.numIntraGrpPos, it.first.index + startingPos, null,
-                        it.first.value.isIgpUntiedByHeadToHead, it.first.value.isIgpUntiedRandomly),
-                    Standing(it.second.value, it.second.value.numIntraGrpPos, it.second.index + startingPos, null,
-                        it.second.value.isIgpUntiedByHeadToHead, it.second.value.isIgpUntiedRandomly),
+                    Standing(
+                        it.first.value, it.first.value.numIntraGrpPos, it.first.index + startingPos, null,
+                        it.first.value.isIgpUntiedByHeadToHead, it.first.value.isIgpUntiedRandomly
+                    ),
+                    Standing(
+                        it.second.value, it.second.value.numIntraGrpPos, it.second.index + startingPos, null,
+                        it.second.value.isIgpUntiedByHeadToHead, it.second.value.isIgpUntiedRandomly
+                    ),
                 )
             else {
                 val isFirstTeamToComeFirst = Random.nextBoolean()
-                val firstTeamPos  = if (isFirstTeamToComeFirst) it.first.index else it.second.index
+                val firstTeamPos = if (isFirstTeamToComeFirst) it.first.index else it.second.index
                 val secondTeamPos = if (isFirstTeamToComeFirst) it.second.index else it.first.index
                 listOf(
-                    Standing(it.first.value, it.first.value.numIntraGrpPos, firstTeamPos + startingPos, null,
+                    Standing(
+                        it.first.value, it.first.value.numIntraGrpPos, firstTeamPos + startingPos, null,
                         it.first.value.isIgpUntiedByHeadToHead, it.first.value.isIgpUntiedRandomly,
-                        isEgpUntiedRandomly = true),
-                    Standing(it.second.value, it.second.value.numIntraGrpPos, secondTeamPos + startingPos, null,
+                        isEgpUntiedRandomly = true
+                    ),
+                    Standing(
+                        it.second.value, it.second.value.numIntraGrpPos, secondTeamPos + startingPos, null,
                         it.second.value.isIgpUntiedByHeadToHead, it.second.value.isIgpUntiedRandomly,
-                        isEgpUntiedRandomly = true)
+                        isEgpUntiedRandomly = true
+                    )
                 )
             }
-    }
 
+        /**
+         * Processes the final standings for a championship, given the extra-group standings of the championship and its
+         * finals matches.
+         */
+        fun processFinalStandings(groupStandings: Set<Standing>, finalsMatches: Set<Match>): Set<Standing> {
+            validateSetOfChampionshipGroupStandings(groupStandings)
+            validateSetOfChampionshipFinalsMatches(finalsMatches)
+            // standings and matches are of the same championship
+            assert(groupStandings.first().championship == finalsMatches.first().championship)
+            // standings have intra-group and extra-group ordering
+            groupStandings.all { it.numIntraGrpPos != null && it.numExtraGrpPos != null }
+
+            val funnelingTree = buildFunnelingTree(groupStandings, finalsMatches)
+            val thirdPlacePlayoff = findThirdPlacePlayoff(funnelingTree, finalsMatches)
+
+            // init set to return
+            val finalsStandings: Set<Standing> = emptySet()
+
+            // bottom finals standings are a copy of the extra-group standings
+            val championship = groupStandings.first().championship
+            for (i in championship.numTeams downTo championship.numQualif) {
+                val gs = groupStandings.find { it.numExtraGrpPos == i }
+                assert(gs != null)
+                finalsStandings.plus(
+                    Standing(
+                        gs!!, gs.numIntraGrpPos, gs.numExtraGrpPos, gs.numExtraGrpPos,
+                        gs.isIgpUntiedByHeadToHead, gs.isIgpUntiedRandomly, gs.isEgpUntiedRandomly
+                    )
+                )
+            }
+
+            // traverse the funneling tree for the top finals standings
+
+
+            return finalsStandings
+        }
+
+        private fun winnerAndLooser(node: Tree<Seeds>): Pair<Team, Team> {
+            fun pair(match: Match) = Pair(match.winner()!!, match.looser()!!)
+            return when (node) {
+                is Tree.Branch -> pair(node.value.match!!)
+                is Tree.Leaf -> pair(node.value.match!!)
+            }
+        }
+
+        data class Seeds(val seed: Int, val otherSeed: Int, var seedStanding: Standing?,
+                         var otherSeedStanding: Standing?, var match: Match?)
+
+        /**
+         * Builds the funneling tree from the groups standings and finals matches.  The algorithm accepts an empty set
+         * of finals matches - or a partially known set of them - to cater for building the tree before all the finals
+         * matches are played.
+         */
+        fun buildFunnelingTree(groupStandings: Set<Standing>, finalsMatches: Set<Match> = emptySet()): Tree<Seeds> {
+            val championship = groupStandings.first().championship
+
+            // obtain qualified teams
+            val qualifiedTeams: List<Standing> = groupStandings
+                .filter { it.numExtraGrpPos!! <= championship.numQualif }
+
+            // build the tree (it will have matches only on the leaves by this point)
+            val numLevels = (ln(championship.numQualif.toDouble()) / ln(2.0)).toInt()
+            fun insertNode(level: Int, seed: Int): Tree<Seeds> {
+                val otherSeed = 2.0.pow(level.toDouble()).toInt() - seed + 1
+                return if (level == numLevels) {
+                    // there must be a match between qualified teams (this is the level right after the group stage)
+                    val seedStanding = qualifiedTeams.find { it.numExtraGrpPos == seed }
+                    val otherSeedStanding = qualifiedTeams.find { it.numExtraGrpPos == otherSeed }
+                    val theMatch = finalsMatches
+                        .find { it.teamA == seedStanding?.team && it.teamB == otherSeedStanding?.team }
+                    Tree.Leaf(Seeds(seed, otherSeed, seedStanding, otherSeedStanding, theMatch))
+                } else
+                    Tree.Branch(
+                        Seeds(seed, otherSeed, null, null, null),
+                        insertNode(level + 1, seed),
+                        insertNode(level + 1, otherSeed)
+                    )
+            }
+            val tree = insertNode(1, 1)
+
+            // traverse the tree to set all remaining matches (needs to be done after building the tree as opposed to on
+            // the same passage, because we only know about each match winner and looser by navigating from the leaves),
+            // if they have already been played
+            fun setTreeRootFinalMatch(tree: Tree<Seeds>): Unit =
+                when (tree) {
+                    is Tree.Branch -> {
+                        val branch = tree
+                        setTreeRootFinalMatch(branch.left)
+                        setTreeRootFinalMatch(branch.right)
+                        val leftWinner = getFromSubtreeRootMatch(branch.left, Match::winner)
+                        val rightWinner = getFromSubtreeRootMatch(branch.right, Match::winner)
+                        val finalMatch = finalsMatches.find { it.teamA == leftWinner && it.teamB == rightWinner }
+                        branch.value.match = finalMatch  // match is mutable
+                    }
+                    is Tree.Leaf -> {
+                        // nothing to do as the leaf match should already be defined during tree build
+                    }
+                }
+
+            setTreeRootFinalMatch(tree)
+            return tree
+        }
+
+        private fun findThirdPlacePlayoff(funnelingTree: Tree<Seeds>, finalsMatches: Set<Match>) =
+            when (funnelingTree) {
+                is Tree.Branch -> {
+                    val leftLooser = getFromSubtreeRootMatch(funnelingTree.left, Match::looser)
+                    val rightLooser = getFromSubtreeRootMatch(funnelingTree.right, Match::looser)
+                    finalsMatches.find { it.teamA == leftLooser && it.teamB == rightLooser }
+                }
+                is Tree.Leaf -> null
+            }
+
+        private fun getFromSubtreeRootMatch(tree: Tree<Seeds>?, whatToGet: (Match) -> Team?): Team? =
+            when (tree) {
+                is Tree.Branch -> if (tree.value.match != null) whatToGet(tree.value.match!!) else null
+                is Tree.Leaf -> if (tree.value.match != null) whatToGet(tree.value.match!!) else null
+                null -> null
+            }
+
+    }
 }

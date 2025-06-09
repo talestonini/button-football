@@ -12,11 +12,16 @@ class GroupStandingsTest : BaseDataTest() {
         private const val RANDOMISATION_ATTEMPTS = 10
 
         private val EGP_HISTORICAL_MISTAKES = setOf(
-            // Necaxa was let down (egp 9) in favour of Palmeiras (egp 8):
+            // Necaxa was let down (extra-group position 9) in favour of Palmeiras (extra-group position 8):
             "but some elements were not found:\n" +
                     "  [ch=la, ed=2, type=g3, team=Necaxa, ig=3, igUntiedByH2H=false, igUntiedRandomly=false, " +
                     "eg=8, egUntiedRandomly=false, fp=null,\n" +
                     "    ch=la, ed=2, type=g1, team=Palmeiras, ig=3, igUntiedByH2H=false, igUntiedRandomly=false, " +
+                    "eg=9, egUntiedRandomly=false, fp=null]\n" +
+                    "and others were not expected:\n" +
+                    "  [ch=la, ed=2, type=g1, team=Palmeiras, ig=3, igUntiedByH2H=false, igUntiedRandomly=false, " +
+                    "eg=8, egUntiedRandomly=false, fp=null,\n" +
+                    "    ch=la, ed=2, type=g3, team=Necaxa, ig=3, igUntiedByH2H=false, igUntiedRandomly=false, " +
                     "eg=9, egUntiedRandomly=false, fp=null]"
         )
     }
@@ -114,6 +119,14 @@ class GroupStandingsTest : BaseDataTest() {
                                 }
                             }
                 }
+            }
+    }
+
+    @Test
+    fun `championship final standings should have teams in their correct final position`() = dataTest {
+        ChampionshipEntity.all()
+            .filter { it.status.description.lowercase() == "encerrado" }
+            .forEach { c ->
             }
     }
 
