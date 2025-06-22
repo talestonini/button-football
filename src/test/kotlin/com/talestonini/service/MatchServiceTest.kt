@@ -18,7 +18,7 @@ class MatchServiceTest : PropertyBasedTest() {
     }
 
     @Property
-    fun `a finals match that gets decided by the full time has always a winner and a looser`(
+    fun `a finals match that gets decided by the full time has always a winner and a loser`(
         @ForAll("finalsMatchTypes") matchType: MatchType,
         @ForAll("scores") numGoalsTeamA: Int,
         @ForAll("scores") numGoalsTeamB: Int,
@@ -29,14 +29,14 @@ class MatchServiceTest : PropertyBasedTest() {
         if (match.isValidScores()) {
             assertEquals(MatchState.PLAYED, match.matchState())
             assertNotNull(match.winner())
-            assertNotNull(match.looser())
+            assertNotNull(match.loser())
         } else {
             assertEquals(numGoalsTeamA, numGoalsTeamB)
         }
     }
 
     @Property
-    fun `a finals match that gets decided by the extra time has always a winner and a looser`(
+    fun `a finals match that gets decided by the extra time has always a winner and a loser`(
         @ForAll("finalsMatchTypes") matchType: MatchType,
         @ForAll("scores") numGoalsFullTime: Int,
         @ForAll("scores") numGoalsExtraA: Int,
@@ -49,14 +49,14 @@ class MatchServiceTest : PropertyBasedTest() {
         if (match.isValidScores()) {
             assertEquals(MatchState.PLAYED, match.matchState())
             assertNotNull(match.winner())
-            assertNotNull(match.looser())
+            assertNotNull(match.loser())
         } else {
             assertEquals(numGoalsExtraA, numGoalsExtraB)
         }
     }
 
     @Property
-    fun `a finals match that gets decided by penalty shootouts has always a winner and a looser`(
+    fun `a finals match that gets decided by penalty shootouts has always a winner and a loser`(
         @ForAll("finalsMatchTypes") matchType: MatchType,
         @ForAll("scores") numGoalsFullTime: Int,
         @ForAll("scores") numGoalsExtraTime: Int,
@@ -70,7 +70,7 @@ class MatchServiceTest : PropertyBasedTest() {
         if (match.isValidScores()) {
             assertEquals(MatchState.PLAYED, match.matchState())
             assertNotNull(match.winner())
-            assertNotNull(match.looser())
+            assertNotNull(match.loser())
         } else {
             assertEquals(numGoalsPntA, numGoalsPntB)
         }

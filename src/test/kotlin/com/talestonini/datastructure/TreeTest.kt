@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test
 class TreeTest {
 
     private val leafTree = Tree.Leaf(1)
-    private val oneLevelTree = Tree.Branch(1, Tree.Leaf(2), Tree.Leaf(3))
-    private val twoLevelTree = Tree.Branch(
+    private val twoLevelTree = Tree.Branch(1, Tree.Leaf(2), Tree.Leaf(3))
+    private val threeLevelTree = Tree.Branch(
         1,
         Tree.Branch(2, Tree.Leaf(3), Tree.Leaf(4)),
         Tree.Branch(5, Tree.Leaf(6), Tree.Leaf(7))
@@ -19,13 +19,13 @@ class TreeTest {
     }
 
     @Test
-    fun mapOneLevelTree() {
-        assertThat(oneLevelTree.map { it * 3 }).isEqualTo(Tree.Branch(3, Tree.Leaf(6), Tree.Leaf(9)))
+    fun mapTwoLevelTree() {
+        assertThat(twoLevelTree.map { it * 3 }).isEqualTo(Tree.Branch(3, Tree.Leaf(6), Tree.Leaf(9)))
     }
 
     @Test
-    fun mapTwoLevelTree() {
-        assertThat(twoLevelTree.map { it.toString() }).isEqualTo(
+    fun mapThreeLevelTree() {
+        assertThat(threeLevelTree.map { it.toString() }).isEqualTo(
             Tree.Branch(
                 "1",
                 Tree.Branch("2", Tree.Leaf("3"), Tree.Leaf("4")),
@@ -40,13 +40,13 @@ class TreeTest {
     }
 
     @Test
-    fun toListOneLevelTree() {
-        assertThat(oneLevelTree.toList()).isEqualTo(listOf(1, 2, 3))
+    fun toListTwoLevelTree() {
+        assertThat(twoLevelTree.toList()).isEqualTo(listOf(1, 2, 3))
     }
 
     @Test
-    fun toListTwoLevelTree() {
-        assertThat(twoLevelTree.toList()).isEqualTo(listOf(1, 2, 3, 4, 5, 6, 7))
+    fun toListThreeLevelTree() {
+        assertThat(threeLevelTree.toList()).isEqualTo(listOf(1, 2, 3, 4, 5, 6, 7))
     }
 
     @Test
@@ -55,13 +55,28 @@ class TreeTest {
     }
 
     @Test
-    fun findFirstInOneLevelTree() {
-        assertThat(oneLevelTree.findFirst { it == 2 }).isEqualTo(2)
+    fun findFirstInTwoLevelTree() {
+        assertThat(twoLevelTree.findFirst { it == 2 }).isEqualTo(2)
     }
 
     @Test
-    fun findFirstInTwoLevelTree() {
-        assertThat(twoLevelTree.findFirst { it == 5 }).isEqualTo(5)
+    fun findFirstInThreeLevelTree() {
+        assertThat(threeLevelTree.findFirst { it == 5 }).isEqualTo(5)
+    }
+
+    @Test
+    fun depthLeafTree() {
+        assertThat(leafTree.depth()).isEqualTo(1)
+    }
+
+    @Test
+    fun depthTwoLevelTree() {
+        assertThat(twoLevelTree.depth()).isEqualTo(2)
+    }
+
+    @Test
+    fun depthThreeLevelTree() {
+        assertThat(threeLevelTree.depth()).isEqualTo(3)
     }
 
 }

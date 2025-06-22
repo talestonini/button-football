@@ -24,6 +24,7 @@ object StandingsTable : IntIdTable() {
     val isIgpUntiedByHeadToHead = bool("IS_IGP_UNTIED_BY_H2H")
     val isIgpUntiedRandomly = bool("IS_IGP_UNTIED_RANDOMLY")
     val isEgpUntiedRandomly = bool("IS_EGP_UNTIED_RANDOMLY")
+    val isFpUntiedByCampaign = bool("IS_FP_UNTIED_BY_CAMPAIGN")
     val isFpUntiedRandomly = bool("IS_FP_UNTIED_RANDOMLY")
 
     override val tableName: String
@@ -50,6 +51,7 @@ class StandingEntity(id: EntityID<Int>) : IntEntity(id) {
     var isIgpUntiedByHeadToHead by StandingsTable.isIgpUntiedByHeadToHead
     var isIgpUntiedRandomly by StandingsTable.isIgpUntiedRandomly
     var isEgpUntiedRandomly by StandingsTable.isEgpUntiedRandomly
+    var isFpUntiedByCampaign by StandingsTable.isFpUntiedByCampaign
     var isFpUntiedRandomly by StandingsTable.isFpUntiedRandomly
 
     override fun toString() = id.toString()

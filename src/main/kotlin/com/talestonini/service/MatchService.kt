@@ -57,19 +57,25 @@ data class Match(
     fun isGroupStageMatch(): Boolean = type.code.lowercase().startsWith("g")
     fun isFinalsMatch(): Boolean = !isGroupStageMatch()
 
-    fun winner(): Team? {
+    fun winner(isIncludeExtraTimeAndPenaltyShootouts: Boolean = true): Team? {
         assert(isValidScores())
-        return if ("${numGoalsPntA ?: 0}${numGoalsExtraA ?: 0}${numGoalsTeamA ?: 0}".toInt() >
-            "${numGoalsPntB ?: 0}${numGoalsExtraB ?: 0}${numGoalsTeamB ?: 0}".toInt()
-        ) this.teamA
-        else if ("${numGoalsPntA ?: 0}${numGoalsExtraA ?: 0}${numGoalsTeamA ?: 0}".toInt() <
-            "${numGoalsPntB ?: 0}${numGoalsExtraB ?: 0}${numGoalsTeamB ?: 0}".toInt()
-        ) this.teamB
-        else null
+        return if (isIncludeExtraTimeAndPenaltyShootouts) {
+            if ("${numGoalsPntA ?: 0}${numGoalsExtraA ?: 0}${numGoalsTeamA ?: 0}".toInt() >
+                "${numGoalsPntB ?: 0}${numGoalsExtraB ?: 0}${numGoalsTeamB ?: 0}".toInt()
+            ) this.teamA
+            else if ("${numGoalsPntA ?: 0}${numGoalsExtraA ?: 0}${numGoalsTeamA ?: 0}".toInt() <
+                "${numGoalsPntB ?: 0}${numGoalsExtraB ?: 0}${numGoalsTeamB ?: 0}".toInt()
+            ) this.teamB
+            else null
+        } else {
+            if ((numGoalsTeamA ?: 0) > (numGoalsTeamB ?: 0)) this.teamA
+            else if ((numGoalsTeamA ?: 0) < (numGoalsTeamB ?: 0)) this.teamB
+            else null
+        }
     }
 
-    fun looser(): Team? =
-        when (winner()) {
+    fun loser(isIncludeExtraTimeAndPenaltyShootouts: Boolean = true): Team? =
+        when (winner(isIncludeExtraTimeAndPenaltyShootouts)) {
             teamA -> teamB
             teamB -> teamA
             else -> null

@@ -33,4 +33,20 @@ sealed class Tree<out A> {
                 else null
         }
 
+    // seeks the left-most depth only because we assume the tree is balanced
+    fun depth(): Int {
+        fun depthAcc(node: Tree<A>, acc: Int): Int =
+            when (node) {
+                is Branch -> depthAcc(node.left, acc+1)
+                is Leaf -> acc
+            }
+        return depthAcc(this, 1)
+    }
+
+    fun value(): A =
+        when (this) {
+            is Branch -> this.value
+            is Leaf -> this.value
+        }
+
 }
