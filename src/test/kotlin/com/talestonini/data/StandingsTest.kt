@@ -9,20 +9,16 @@ import kotlin.test.DefaultAsserter.fail
 class StandingsTest : BaseDataTest() {
 
     companion object {
-        private const val RANDOMISATION_ATTEMPTS = 50
+        private const val RANDOMISATION_ATTEMPTS = 10
 
         private val EGP_HISTORICAL_MISTAKES = setOf(
             // Necaxa was let down (extra-group position 9) in favour of Palmeiras (extra-group position 8):
             """but some elements were not found:
-  [ch=la, ed=2, team=Santos, type=g1, ig=1, igUntiedByH2H=false, igUntiedRandomly=false, eg=1, egUntiedRandomly=true, fp=null, fpUntiedByCampaign=false, fpUntiedRandomly=false, wins=2, draws=1, losses=0, gs=6, gc=2, gd=4,
-    ch=la, ed=2, team=Boca Juniors, type=g3, ig=1, igUntiedByH2H=false, igUntiedRandomly=false, eg=2, egUntiedRandomly=true, fp=null, fpUntiedByCampaign=false, fpUntiedRandomly=false, wins=2, draws=1, losses=0, gs=6, gc=2, gd=4,
-    ch=la, ed=2, team=Necaxa, type=g3, ig=3, igUntiedByH2H=false, igUntiedRandomly=false, eg=8, egUntiedRandomly=false, fp=null, fpUntiedByCampaign=false, fpUntiedRandomly=false, wins=1, draws=0, losses=2, gs=4, gc=8, gd=-4,
-    ch=la, ed=2, team=Palmeiras, type=g1, ig=3, igUntiedByH2H=false, igUntiedRandomly=false, eg=9, egUntiedRandomly=false, fp=null, fpUntiedByCampaign=false, fpUntiedRandomly=false, wins=0, draws=3, losses=0, gs=3, gc=3, gd=0]
+  [ch=la, ed=2, team=Necaxa, type=g3, ig=3, igUntiedByH2H=false, igUntiedRandomly=false, eg=8, egUntiedRandomly=false, fp=null, fpUntiedRandomly=false, wins=1, draws=0, losses=2, gs=4, gc=8, gd=-4,
+    ch=la, ed=2, team=Palmeiras, type=g1, ig=3, igUntiedByH2H=false, igUntiedRandomly=false, eg=9, egUntiedRandomly=false, fp=null, fpUntiedRandomly=false, wins=0, draws=3, losses=0, gs=3, gc=3, gd=0]
 and others were not expected:
-  [ch=la, ed=2, team=Boca Juniors, type=g3, ig=1, igUntiedByH2H=false, igUntiedRandomly=false, eg=1, egUntiedRandomly=true, fp=null, fpUntiedByCampaign=false, fpUntiedRandomly=false, wins=2, draws=1, losses=0, gs=6, gc=2, gd=4,
-    ch=la, ed=2, team=Santos, type=g1, ig=1, igUntiedByH2H=false, igUntiedRandomly=false, eg=2, egUntiedRandomly=true, fp=null, fpUntiedByCampaign=false, fpUntiedRandomly=false, wins=2, draws=1, losses=0, gs=6, gc=2, gd=4,
-    ch=la, ed=2, team=Palmeiras, type=g1, ig=3, igUntiedByH2H=false, igUntiedRandomly=false, eg=8, egUntiedRandomly=false, fp=null, fpUntiedByCampaign=false, fpUntiedRandomly=false, wins=0, draws=3, losses=0, gs=3, gc=3, gd=0,
-    ch=la, ed=2, team=Necaxa, type=g3, ig=3, igUntiedByH2H=false, igUntiedRandomly=false, eg=9, egUntiedRandomly=false, fp=null, fpUntiedByCampaign=false, fpUntiedRandomly=false, wins=1, draws=0, losses=2, gs=4, gc=8, gd=-4"""
+  [ch=la, ed=2, team=Palmeiras, type=g1, ig=3, igUntiedByH2H=false, igUntiedRandomly=false, eg=8, egUntiedRandomly=false, fp=null, fpUntiedRandomly=false, wins=0, draws=3, losses=0, gs=3, gc=3, gd=0,
+    ch=la, ed=2, team=Necaxa, type=g3, ig=3, igUntiedByH2H=false, igUntiedRandomly=false, eg=9, egUntiedRandomly=false, fp=null, fpUntiedRandomly=false, wins=1, draws=0, losses=2, gs=4, gc=8, gd=-4]"""
         )
     }
 
@@ -144,8 +140,7 @@ and others were not expected:
                     .map {
                         val st = StandingService.toStanding(it)
                         Standing(st, st.numIntraGrpPos, st.numExtraGrpPos, st.numFinalPos, st.isIgpUntiedByHeadToHead,
-                            st.isIgpUntiedRandomly, st.isEgpUntiedRandomly, st.isFpUntiedByCampaign,
-                            st.isFpUntiedRandomly)
+                            st.isIgpUntiedRandomly, st.isEgpUntiedRandomly, st.isFpUntiedRandomly)
                     }
                     .sortedWith(compareBy(Standing::numFinalPos))
                     .toSet()

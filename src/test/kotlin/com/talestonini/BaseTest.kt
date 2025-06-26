@@ -26,7 +26,7 @@ abstract class BaseTest {
         val anyMatch = Match(anyChampionship, anyMatchType, anyTeam, anyOtherTeam, 0, 0, null, null, null, null)
         val anyStanding = Standing(anyChampionship, anyTeam, anyMatchType, null, null, null, 0, 0, 0, 0, 0,
             isIgpUntiedByHeadToHead = false, isIgpUntiedRandomly = false, isEgpUntiedRandomly = false,
-            isFpUntiedByCampaign = false, isFpUntiedRandomly = false)
+            isFpUntiedRandomly = false)
     }
 
 }

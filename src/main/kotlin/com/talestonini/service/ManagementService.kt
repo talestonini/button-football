@@ -28,26 +28,33 @@ class ManagementService {
             val teamAStanding = Standing(
                 match.championship, match.teamA, match.type, null, null, null, teamAWdl.wins, teamAWdl.draws,
                 teamAWdl.losses, match.numGoalsTeamA ?: 0, match.numGoalsTeamB ?: 0, isIgpUntiedByHeadToHead = false,
-                isIgpUntiedRandomly = false, isEgpUntiedRandomly = false, isFpUntiedByCampaign = false,
-                isFpUntiedRandomly = false
+                isIgpUntiedRandomly = false, isEgpUntiedRandomly = false, isFpUntiedRandomly = false
             )
 
             val teamBWdl = winsDrawsLosses(match, match.teamB)
             val teamBStanding = Standing(
                 match.championship, match.teamB, match.type, null, null, null, teamBWdl.wins, teamBWdl.draws,
                 teamBWdl.losses, match.numGoalsTeamB ?: 0, match.numGoalsTeamA ?: 0, isIgpUntiedByHeadToHead = false,
-                isIgpUntiedRandomly = false, isEgpUntiedRandomly = false, isFpUntiedByCampaign = false,
-                isFpUntiedRandomly = false
+                isIgpUntiedRandomly = false, isEgpUntiedRandomly = false, isFpUntiedRandomly = false
             )
 
             return Pair(teamAStanding, teamBStanding)
         }
 
-        fun isTiedByAllCriteria(st1: Standing, st2: Standing): Boolean =
+        private fun isTiedByAllCriteria(st1: Standing, st2: Standing): Boolean =
             st1.numPoints() == st2.numPoints() &&
                     st1.numWins == st2.numWins &&
                     st1.numGoalsDiff() == st2.numGoalsDiff() &&
                     st1.numGoalsScored == st2.numGoalsScored
+
+        private fun isTiedByAllCriteria(st1: MatchWithCampaignStanding, st2: MatchWithCampaignStanding): Boolean =
+            st1.matchStanding.numPoints() == st2.matchStanding.numPoints() &&
+                    st1.matchStanding.numGoalsDiff() == st2.matchStanding.numGoalsDiff() &&
+                    st1.matchStanding.numGoalsScored == st2.matchStanding.numGoalsScored &&
+                    st1.campaignStanding.numPoints() == st2.campaignStanding.numPoints() &&
+                    st1.campaignStanding.numWins == st2.campaignStanding.numWins &&
+                    st1.campaignStanding.numGoalsDiff() == st2.campaignStanding.numGoalsDiff() &&
+                    st1.campaignStanding.numGoalsScored == st2.campaignStanding.numGoalsScored
 
         /**
          * Processes intra-group standings for a single group of a championship, given the set of 6 matches of that
@@ -71,7 +78,7 @@ class ManagementService {
                             acc.numGoalsScored + st.numGoalsScored,
                             acc.numGoalsConceded + st.numGoalsConceded,
                             isIgpUntiedByHeadToHead = false, isIgpUntiedRandomly = false, isEgpUntiedRandomly = false,
-                            isFpUntiedByCampaign = false, isFpUntiedRandomly = false
+                            isFpUntiedRandomly = false
                         )
                     }
                 }
@@ -291,7 +298,6 @@ class ManagementService {
                             acc.isIgpUntiedByHeadToHead || st.isIgpUntiedByHeadToHead,
                             acc.isIgpUntiedRandomly || st.isIgpUntiedRandomly,
                             acc.isEgpUntiedRandomly || st.isEgpUntiedRandomly,
-                            acc.isFpUntiedByCampaign || st.isFpUntiedByCampaign,
                             acc.isFpUntiedRandomly || st.isFpUntiedRandomly
                         )
                     }
@@ -303,39 +309,32 @@ class ManagementService {
             for (level in funnelingTree.depth() downTo 1) {
                 if (level > 2) {  // from quarter-finals onwards
                     // get match standings for the losers
-                    val losersMatchStandings = funnelingList.filter { it.level == level }
+                    val losersMatchWithCampaignStandings = funnelingList.filter { it.level == level }
                         .flatMap { matchStandings(it.match!!).toList().filter {
                             standing -> standing.team == it.match?.loser()
                         }}
+                        .map { MatchWithCampaignStanding(it, reducedStandings.find { rs -> rs.team == it.team }!!) }
 
                     // sort losers, as they did not progress to the next level
                     finalStandings +=
-                        losersMatchStandings.sortedWith(
-                            compareBy(
-                                Standing::numPoints,
-                                Standing::numGoalsDiff,
-                                Standing::numGoalsScored
-                            )
+                        losersMatchWithCampaignStandings.sortedWith(
+                            compareBy<MatchWithCampaignStanding> { it.matchStanding.numPoints() }
+                                .thenBy { it.matchStanding.numGoalsDiff() }
+                                .thenBy { it.matchStanding.numGoalsScored }
+                                .thenBy { it.campaignStanding.numPoints() }
+                                .thenBy { it.campaignStanding.numWins }
+                                .thenBy { it.campaignStanding.numGoalsDiff() }
+                                .thenBy { it.campaignStanding.numGoalsScored }
                                 .reversed()
                         )
                             .withIndex()  // obtain a position number (0, 1, 2, 3)
                             .zipWithNext()  // pair adjacent teams standings ((0,1), (1,2), (2,3))
-                            .flatMap {
-                                processPossiblyTiedFinalStandings(
-                                    it,
-                                    reducedStandings.filter { rs ->
-                                        rs.team == it.first.value.team || rs.team == it.second.value.team
-                                    },
-                                    (2.0.pow(level - 1) + 1).toInt()
-                                )
-                            }
+                            .flatMap { processPossiblyTiedFinalStandings(it, (2.0.pow(level - 1) + 1).toInt()) }
                             .groupBy { it.team }  // standings in positions 2 and 3 will have duplicates,
                                                   // as per zipWithNext
                             .mapValues {
                                 it.value.reduce { acc, st ->
-                                    if (acc.isFpUntiedByCampaign && !st.isFpUntiedByCampaign) acc
-                                    else if (!acc.isFpUntiedByCampaign && st.isFpUntiedByCampaign) st
-                                    else if (acc.isFpUntiedRandomly && !st.isFpUntiedRandomly) acc
+                                    if (acc.isFpUntiedRandomly && !st.isFpUntiedRandomly) acc
                                     else if (!acc.isFpUntiedRandomly && st.isFpUntiedRandomly) st
                                     else acc  // either would be fine, as they are tied by all criteria
                                 }
@@ -365,6 +364,8 @@ class ManagementService {
                 .toSet()
         }
 
+        private data class MatchWithCampaignStanding(val matchStanding: Standing, val campaignStanding: Standing)
+
         private infix fun Int.downUntil(until: Int) = IntProgression.fromClosedRange(this, until + 1, -1)
 
         private fun buildFinalStanding(toClone: Standing, finalPos: Int): Standing =
@@ -372,52 +373,23 @@ class ManagementService {
                 toClone.isIgpUntiedRandomly, toClone.isEgpUntiedRandomly)
 
         private fun processPossiblyTiedFinalStandings(
-            it: Pair<IndexedValue<Standing>, IndexedValue<Standing>>,
-            allStatsUntilLoss: List<Standing>,
+            it: Pair<IndexedValue<MatchWithCampaignStanding>, IndexedValue<MatchWithCampaignStanding>>,
             startingPos: Int
         ): List<Standing> {
-            val teamOneStats = allStatsUntilLoss.find { allStats -> allStats.team == it.first.value.team }
-            val teamTwoStats = allStatsUntilLoss.find { allStats -> allStats.team == it.second.value.team }
+            val teamOneStats = it.first.value.campaignStanding
+            val teamTwoStats = it.second.value.campaignStanding
             return if (!isTiedByAllCriteria(it.first.value, it.second.value)) {
-                // original sorting by the level final match is able to sort the final pos
+                // original sorting by the level final match and campaign is able to sort the final pos
                 listOf(
                     Standing(
-                        teamOneStats!!, teamOneStats.numIntraGrpPos, teamOneStats.numExtraGrpPos,
+                        teamOneStats, teamOneStats.numIntraGrpPos, teamOneStats.numExtraGrpPos,
                         it.first.index + startingPos, teamOneStats.isIgpUntiedByHeadToHead,
                         teamOneStats.isIgpUntiedRandomly, teamOneStats.isEgpUntiedRandomly
                     ),
                     Standing(
-                        teamTwoStats!!, teamTwoStats.numIntraGrpPos, teamTwoStats.numExtraGrpPos,
+                        teamTwoStats, teamTwoStats.numIntraGrpPos, teamTwoStats.numExtraGrpPos,
                         it.second.index + startingPos, teamTwoStats.isIgpUntiedByHeadToHead,
                         teamTwoStats.isIgpUntiedRandomly, teamTwoStats.isEgpUntiedRandomly
-                    )
-                )
-            } else if (!isTiedByAllCriteria(allStatsUntilLoss[0], allStatsUntilLoss[1])) {
-                // tied by the level final match standings, teams are split apart by all their stats until loss in the
-                // finals stage
-                val sorted = allStatsUntilLoss.sortedWith(
-                    compareBy(
-                        Standing::numPoints,
-                        Standing::numWins,
-                        Standing::numGoalsDiff,
-                        Standing::numGoalsScored
-                    )
-                        .reversed()
-                )
-                val teamOnePos =
-                    (if (sorted[0].team == teamOneStats?.team) it.first.index else it.second.index) + startingPos
-                val teamTwoPos =
-                    (if (sorted[0].team == teamTwoStats?.team) it.first.index else it.second.index) + startingPos
-                listOf(
-                    Standing(
-                        teamOneStats!!, teamOneStats.numIntraGrpPos, teamOneStats.numExtraGrpPos, teamOnePos,
-                        teamOneStats.isIgpUntiedByHeadToHead, teamOneStats.isIgpUntiedRandomly,
-                        teamOneStats.isEgpUntiedRandomly, isFpUntiedByCampaign = true
-                    ),
-                    Standing(
-                        teamTwoStats!!, teamTwoStats.numIntraGrpPos, teamTwoStats.numExtraGrpPos, teamTwoPos,
-                        teamTwoStats.isIgpUntiedByHeadToHead, teamTwoStats.isIgpUntiedRandomly,
-                        teamTwoStats.isEgpUntiedRandomly, isFpUntiedByCampaign = true
                     )
                 )
             } else {
@@ -427,12 +399,12 @@ class ManagementService {
                 val secondTeamPos = if (isFirstTeamToComeFirst) it.second.index else it.first.index
                 listOf(
                     Standing(
-                        teamOneStats!!, teamOneStats.numIntraGrpPos, teamOneStats.numExtraGrpPos,
+                        teamOneStats, teamOneStats.numIntraGrpPos, teamOneStats.numExtraGrpPos,
                         firstTeamPos + startingPos, teamOneStats.isIgpUntiedByHeadToHead,
                         teamOneStats.isIgpUntiedRandomly, teamOneStats.isEgpUntiedRandomly, isFpUntiedRandomly = true
                     ),
                     Standing(
-                        teamTwoStats!!, teamTwoStats.numIntraGrpPos, teamTwoStats.numExtraGrpPos,
+                        teamTwoStats, teamTwoStats.numIntraGrpPos, teamTwoStats.numExtraGrpPos,
                         secondTeamPos + startingPos, teamTwoStats.isIgpUntiedByHeadToHead,
                         teamTwoStats.isIgpUntiedRandomly, teamTwoStats.isEgpUntiedRandomly, isFpUntiedRandomly = true
                     )
