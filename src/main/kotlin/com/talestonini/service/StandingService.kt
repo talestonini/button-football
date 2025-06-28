@@ -8,28 +8,54 @@ import org.jetbrains.exposed.sql.Database
 data class Standing(
     val id: Int?, val championship: Championship, val team: Team, val type: MatchType, val numIntraGrpPos: Int?,
     val numExtraGrpPos: Int?, val numFinalPos: Int?, val numWins: Int, val numDraws: Int, val numLosses: Int,
-    val numGoalsScored: Int, val numGoalsConceded: Int, val isIgpTied: Boolean = false
+    val numGoalsScored: Int, val numGoalsConceded: Int, val isIgpUntiedByHeadToHead: Boolean,
+    val isIgpUntiedRandomly: Boolean, val isEgpUntiedRandomly: Boolean, val isFpUntiedRandomly: Boolean
 ) {
+    // constructor without id field
     constructor(
         championship: Championship, team: Team, type: MatchType, numIntraGrpPos: Int?, numExtraGrpPos: Int?,
         numFinalPos: Int?, numWins: Int, numDraws: Int, numLosses: Int, numGoalsScored: Int, numGoalsConceded: Int,
-        isIgpTied: Boolean = false
+        isIgpUntiedByHeadToHead: Boolean, isIgpUntiedRandomly: Boolean, isEgpUntiedRandomly: Boolean,
+        isFpUntiedRandomly: Boolean
     ) : this(
         null, championship, team, type, numIntraGrpPos, numExtraGrpPos, numFinalPos, numWins, numDraws, numLosses,
-        numGoalsScored, numGoalsConceded, isIgpTied
+        numGoalsScored, numGoalsConceded, isIgpUntiedByHeadToHead, isIgpUntiedRandomly, isEgpUntiedRandomly,
+        isFpUntiedRandomly
     )
 
+    // constructor to clone a standing
     constructor(
-        toClone: Standing, numIntraGrpPos: Int?, numExtraGrpPos: Int?, numFinalPos: Int?, isIgpTied: Boolean,
+        toClone: Standing, numIntraGrpPos: Int?, numExtraGrpPos: Int?, numFinalPos: Int?,
+        isIgpUntiedByHeadToHead: Boolean = false, isIgpUntiedRandomly: Boolean = false,
+        isEgpUntiedRandomly: Boolean = false, isFpUntiedRandomly: Boolean = false
     ) : this(
         toClone.id, toClone.championship, toClone.team, toClone.type, numIntraGrpPos, numExtraGrpPos, numFinalPos,
         toClone.numWins, toClone.numDraws, toClone.numLosses, toClone.numGoalsScored, toClone.numGoalsConceded,
-        isIgpTied
+        isIgpUntiedByHeadToHead, isIgpUntiedRandomly, isEgpUntiedRandomly, isFpUntiedRandomly
+    )
+
+    constructor(
+        toClone: Standing, type: MatchType, numIntraGrpPos: Int?, numExtraGrpPos: Int?, numFinalPos: Int?,
+        isIgpUntiedByHeadToHead: Boolean = false, isIgpUntiedRandomly: Boolean = false,
+        isEgpUntiedRandomly: Boolean = false, isFpUntiedRandomly: Boolean = false
+    ) : this(
+        toClone.id, toClone.championship, toClone.team, type, numIntraGrpPos, numExtraGrpPos, numFinalPos,
+        toClone.numWins, toClone.numDraws, toClone.numLosses, toClone.numGoalsScored, toClone.numGoalsConceded,
+        isIgpUntiedByHeadToHead, isIgpUntiedRandomly, isEgpUntiedRandomly, isFpUntiedRandomly
     )
 
     fun numPoints(): Int = Constants.NUM_POINTS_PER_WIN * numWins + Constants.NUM_POINTS_PER_DRAW * numDraws
     fun numMatches(): Int = numWins + numDraws + numLosses
     fun numGoalsDiff(): Int = numGoalsScored - numGoalsConceded
+
+    override fun toString(): String {
+        return "ch=${championship.type.code}, ed=${championship.numEdition}, team=${team.name}, type=${type.code}, " +
+                "ig=$numIntraGrpPos, igUntiedByH2H=$isIgpUntiedByHeadToHead, igUntiedRandomly=$isIgpUntiedRandomly, " +
+                "eg=$numExtraGrpPos, egUntiedRandomly=$isEgpUntiedRandomly, " +
+                "fp=$numFinalPos, fpUntiedRandomly=$isFpUntiedRandomly, " +
+                "wins=$numWins, draws=$numDraws, losses=$numLosses, gs=$numGoalsScored, gc=$numGoalsConceded, " +
+                "gd=${numGoalsDiff()}"
+    }
 }
 
 @Serializable
@@ -55,7 +81,11 @@ class StandingService(database: Database) : BaseService() {
                 standingEntity.numDraws,
                 standingEntity.numLosses,
                 standingEntity.numGoalsScored,
-                standingEntity.numGoalsConceded
+                standingEntity.numGoalsConceded,
+                standingEntity.isIgpUntiedByHeadToHead,
+                standingEntity.isIgpUntiedRandomly,
+                standingEntity.isEgpUntiedRandomly,
+                standingEntity.isFpUntiedRandomly
             )
 
         fun toStandingApiView(standingEntity: StandingEntity): StandingApiView =

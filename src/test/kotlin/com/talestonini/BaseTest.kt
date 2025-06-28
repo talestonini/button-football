@@ -8,14 +8,9 @@ abstract class BaseTest {
     companion object {
         private var db: Database? = null
 
-        fun database(): Database? {
+        fun database(url: String = "jdbc:h2:./h2/db/buttonfootball"): Database? {
             if (db == null) {
-                db = Database.connect(
-                    url = "jdbc:h2:./h2/db/buttonfootball",
-                    driver = "org.h2.Driver",
-                    user = "sa",
-                    password = "buttonfootball"
-                )
+                db = Database.connect(url, driver = "org.h2.Driver", user = "sa", password = "buttonfootball")
             }
             return db
         }
@@ -29,7 +24,9 @@ abstract class BaseTest {
         val anyOtherTeam = Team("anyOtherTeam", anyTeamType, "", "1901", "anyOtherCity", anyCountry, "")
         val anyMatchType = MatchType("mt", "anyMatchType")
         val anyMatch = Match(anyChampionship, anyMatchType, anyTeam, anyOtherTeam, 0, 0, null, null, null, null)
-        val anyStanding = Standing(anyChampionship, anyTeam, anyMatchType, null, null, null, 0, 0, 0, 0, 0)
+        val anyStanding = Standing(anyChampionship, anyTeam, anyMatchType, null, null, null, 0, 0, 0, 0, 0,
+            isIgpUntiedByHeadToHead = false, isIgpUntiedRandomly = false, isEgpUntiedRandomly = false,
+            isFpUntiedRandomly = false)
     }
 
 }
