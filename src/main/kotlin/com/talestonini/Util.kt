@@ -1,4 +1,4 @@
-package com.talestonini.service.sorting
+package com.talestonini
 
 import kotlin.math.pow
 import kotlin.math.roundToInt
