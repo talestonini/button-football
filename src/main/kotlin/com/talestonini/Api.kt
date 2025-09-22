@@ -7,14 +7,15 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureButtonFootballApi() {
-    val database = database()
-    val teamTypeService = TeamTypeService(database)
-    val championshipTypeService = ChampionshipTypeService(database)
-    val championshipService = ChampionshipService(database)
-    val matchTypeService = MatchTypeService(database)
-    val matchService = MatchService(database)
-    val standingService = StandingService(database)
-    val teamService = TeamService(database)
+    val teamTypeService = TeamTypeService()
+    val championshipTypeService = ChampionshipTypeService()
+    val championshipService = ChampionshipService()
+    val matchTypeService = MatchTypeService()
+    val matchService = MatchService()
+    val standingService = StandingService()
+    val rankingService = RankingService()
+    val scoringService = ScoringService()
+    val teamService = TeamService()
 
     routing {
         get("/teamTypes") {
@@ -108,6 +109,30 @@ fun Application.configureButtonFootballApi() {
             val standings = standingService.read(championshipId, listOf("Final"))
             if (standings.isNotEmpty()) {
                 call.respond(HttpStatusCode.OK, standings)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
+        get("/rankings") {
+            val codChampionshipType = call.queryParameters["codChampionshipType"]
+                ?: throw IllegalStateException("missing codChampionshipType")
+            val numUpToEdition = call.queryParameters["numUpToEdition"]?.toInt()
+                ?: throw IllegalStateException("missing numUpToEdition")
+            val rankings = rankingService.read(codChampionshipType, numUpToEdition)
+            if (rankings.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, rankings)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
+        get("/scorings") {
+            val codChampionshipType = call.queryParameters["codChampionshipType"]
+                ?: throw IllegalStateException("missing codChampionshipType")
+            val scorings = scoringService.read(codChampionshipType)
+            if (scorings.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, scorings)
             } else {
                 call.respond(HttpStatusCode.NotFound)
             }

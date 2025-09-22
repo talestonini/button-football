@@ -3,7 +3,6 @@ package com.talestonini.service
 import com.talestonini.exception.InvalidNumberOfTeams
 import com.talestonini.model.ChampionshipEntity
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Database
 
 data class Championship(
     val id: Int?, val type: ChampionshipType, val numEdition: Int, val dtCreation: String, val dtEnd: String?,
@@ -21,7 +20,7 @@ data class ChampionshipApiView(
     val dtEnd: String?, val numTeams: Int, val numQualif: Int, val status: String,
 )
 
-class ChampionshipService(database: Database) : BaseService() {
+class ChampionshipService() : BaseService() {
 
     companion object {
         fun toChampionship(championshipEntity: ChampionshipEntity): Championship =

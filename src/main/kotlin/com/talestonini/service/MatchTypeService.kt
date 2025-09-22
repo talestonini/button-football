@@ -2,7 +2,6 @@ package com.talestonini.service
 
 import com.talestonini.model.MatchTypeEntity
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Database
 
 data class MatchType(val id: Int?, val code: String, val description: String) {
     constructor(code: String, description: String) : this(null, code, description)
@@ -11,7 +10,7 @@ data class MatchType(val id: Int?, val code: String, val description: String) {
 @Serializable
 data class MatchTypeApiView(val id: Int, val code: String, val description: String)
 
-class MatchTypeService(database: Database) : BaseService() {
+class MatchTypeService() : BaseService() {
 
     companion object {
         fun toMatchType(matchTypeEntity: MatchTypeEntity): MatchType =

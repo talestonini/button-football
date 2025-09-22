@@ -3,7 +3,6 @@ package com.talestonini.service
 import com.talestonini.model.MatchEntity
 import com.talestonini.model.MatchesTable
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Database
 
 enum class MatchState {
     PLAYED, UNPLAYED
@@ -89,7 +88,7 @@ data class MatchApiView(
     val numGoalsExtraA: Int?, val numGoalsExtraB: Int?, val numGoalsPntA: Int?, val numGoalsPntB: Int?,
 )
 
-class MatchService(database: Database) : BaseService() {
+class MatchService() : BaseService() {
 
     companion object {
         fun toMatch(matchEntity: MatchEntity): Match =
