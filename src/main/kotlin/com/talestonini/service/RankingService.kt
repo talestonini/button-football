@@ -3,7 +3,6 @@ package com.talestonini.service
 import com.talestonini.model.RankingEntity
 import com.talestonini.model.RankingsTable
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.and
 
 data class Ranking(
@@ -24,6 +23,33 @@ data class Ranking(
         numRankingPos, numPoints, numMatches, numWins, numDraws, numLosses, numGoalsScored, numGoalsConceded,
         numGoalsDiff, numChampionships, numUpToEdition
     )
+
+    constructor(
+        toClone: Ranking, numRankingPos: Int
+    ) : this(
+        toClone.championshipType, toClone.team, toClone.numBestPos, toClone.numWorstPos, toClone.numAvgPos,
+        toClone.numParticipations, toClone.numRankingPoints, numRankingPos, toClone.numPoints, toClone.numMatches,
+        toClone.numWins, toClone.numDraws, toClone.numLosses, toClone.numGoalsScored, toClone.numGoalsConceded,
+        toClone.numGoalsDiff, toClone.numChampionships, toClone.numUpToEdition
+    )
+
+    constructor(
+        toClone: Ranking, numAvgPos: Double
+    ) : this(
+        toClone.championshipType, toClone.team, toClone.numBestPos, toClone.numWorstPos, numAvgPos,
+        toClone.numParticipations, toClone.numRankingPoints, toClone.numRankingPos, toClone.numPoints,
+        toClone.numMatches, toClone.numWins, toClone.numDraws, toClone.numLosses, toClone.numGoalsScored,
+        toClone.numGoalsConceded, toClone.numGoalsDiff, toClone.numChampionships, toClone.numUpToEdition
+    )
+
+    override fun toString(): String {
+        return "ch=${championshipType.code}, upToEd=${numUpToEdition}, team=${team.name}, " +
+                "rankingPos=${numRankingPos}, rankingPoints=${numRankingPoints}, titles=${numChampionships}, " +
+                "participations=${numParticipations}, agvPos=${numAvgPos}, points=${numPoints}, wins=${numWins}, " +
+                "gd=${numGoalsDiff}, gs=${numGoalsScored}, best=${numBestPos}, worst=${numWorstPos}, " +
+                "matches=${numMatches}, draws=${numDraws}, losses=${numLosses}, " +
+                "gc=${numGoalsConceded}"
+    }
 }
 
 @Serializable
@@ -34,7 +60,7 @@ data class RankingApiView(
     val numGoalsConceded: Int, val numGoalsDiff: Int, val numChampionships: Int, val numUpToEdition: Int,
 )
 
-class RankingService(database: Database) : BaseService() {
+class RankingService() : BaseService() {
 
     companion object {
         fun toRanking(rankingEntity: RankingEntity): Ranking =

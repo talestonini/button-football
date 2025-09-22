@@ -7,16 +7,15 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureButtonFootballApi() {
-    val database = database()
-    val teamTypeService = TeamTypeService(database)
-    val championshipTypeService = ChampionshipTypeService(database)
-    val championshipService = ChampionshipService(database)
-    val matchTypeService = MatchTypeService(database)
-    val matchService = MatchService(database)
-    val standingService = StandingService(database)
-    val rankingService = RankingService(database)
-    val scoringService = ScoringService(database)
-    val teamService = TeamService(database)
+    val teamTypeService = TeamTypeService()
+    val championshipTypeService = ChampionshipTypeService()
+    val championshipService = ChampionshipService()
+    val matchTypeService = MatchTypeService()
+    val matchService = MatchService()
+    val standingService = StandingService()
+    val rankingService = RankingService()
+    val scoringService = ScoringService()
+    val teamService = TeamService()
 
     routing {
         get("/teamTypes") {

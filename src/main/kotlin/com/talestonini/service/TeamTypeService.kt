@@ -2,7 +2,6 @@ package com.talestonini.service
 
 import com.talestonini.model.TeamTypeEntity
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Database
 
 data class TeamType(val id: Int?, val code: String, val description: String) {
     constructor(code: String, description: String) : this(null, code, description)
@@ -11,7 +10,7 @@ data class TeamType(val id: Int?, val code: String, val description: String) {
 @Serializable
 data class TeamTypeApiView(val id: Int, val code: String, val description: String)
 
-class TeamTypeService(database: Database) : BaseService() {
+class TeamTypeService() : BaseService() {
 
     companion object {
         fun toTeamType(teamTypeEntity: TeamTypeEntity): TeamType =

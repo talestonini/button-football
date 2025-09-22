@@ -3,7 +3,6 @@ package com.talestonini.service
 import com.talestonini.model.StandingEntity
 import com.talestonini.model.StandingsTable
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Database
 
 data class Standing(
     val id: Int?, val championship: Championship, val team: Team, val type: MatchType, val numIntraGrpPos: Int?,
@@ -66,7 +65,7 @@ data class StandingApiView(
     val numGoalsConceded: Int, val numGoalsDiff: Int,
 )
 
-class StandingService(database: Database) : BaseService() {
+class StandingService() : BaseService() {
 
     companion object {
         fun toStanding(standingEntity: StandingEntity): Standing =

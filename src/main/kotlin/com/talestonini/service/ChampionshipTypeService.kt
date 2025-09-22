@@ -2,7 +2,6 @@ package com.talestonini.service
 
 import com.talestonini.model.ChampionshipTypeEntity
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Database
 
 data class ChampionshipType(
     val id: Int?, val code: String, val description: String, val numEditions: Int, val logoImgFile: String,
@@ -16,7 +15,7 @@ data class ChampionshipTypeApiView(
     val id: Int, val code: String, val description: String, val numEditions: Int, val logoImgFile: String,
 )
 
-class ChampionshipTypeService(database: Database) : BaseService() {
+class ChampionshipTypeService() : BaseService() {
 
     companion object {
         fun toChampionshipType(championshipTypeEntity: ChampionshipTypeEntity): ChampionshipType =

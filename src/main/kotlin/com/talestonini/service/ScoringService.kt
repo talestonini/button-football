@@ -3,7 +3,6 @@ package com.talestonini.service
 import com.talestonini.model.ScoringEntity
 import com.talestonini.model.ScoringsTable
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Database
 
 data class Scoring(val id: Int?, val championshipType: ChampionshipType, val numPos: Int, val numPoints: Int) {
     // constructor without id field
@@ -14,7 +13,7 @@ data class Scoring(val id: Int?, val championshipType: ChampionshipType, val num
 @Serializable
 data class ScoringApiView(val championshipType: String, val numPos: Int, val numPoints: Int)
 
-class ScoringService(database: Database) : BaseService() {
+class ScoringService() : BaseService() {
 
     companion object {
         fun toScoring(scoringEntity: ScoringEntity): Scoring =
@@ -41,6 +40,14 @@ class ScoringService(database: Database) : BaseService() {
                     compareBy(ScoringEntity::numPos)
                 )
                 .map { toScoringApiView(it) }
+        }
+    }
+
+    suspend fun championshipTypeScoring(championshipType: ChampionshipType): Map<Int, Int> {
+        return dbQuery {
+            ScoringEntity.all()
+                .filter { it.championshipType.code == championshipType.code }
+                .associate { it.numPos to it.numPoints }
         }
     }
 
