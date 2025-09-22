@@ -44,6 +44,7 @@ class RankingSortingService {
                         stCount, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, stCount
                     )
                     teamStandings.value.fold(initialRanking, { acc, st ->
+                        // only qualified teams score ranking points
                         val numRankingPoints =
                             if (st.numFinalPos!! <= numQualifPerEdition[st.championship.numEdition]!!)
                                 scoring[st.numFinalPos]!!
