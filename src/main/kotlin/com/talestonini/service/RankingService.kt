@@ -25,7 +25,7 @@ data class Ranking(
     )
 
     constructor(
-        toClone: Ranking, numRankingPos: Int
+        toClone: Ranking, numRankingPos: Int,
     ) : this(
         toClone.championshipType, toClone.team, toClone.numBestPos, toClone.numWorstPos, toClone.numAvgPos,
         toClone.numParticipations, toClone.numRankingPoints, numRankingPos, toClone.numPoints, toClone.numMatches,
@@ -34,7 +34,7 @@ data class Ranking(
     )
 
     constructor(
-        toClone: Ranking, numAvgPos: Double
+        toClone: Ranking, numAvgPos: Double,
     ) : this(
         toClone.championshipType, toClone.team, toClone.numBestPos, toClone.numWorstPos, numAvgPos,
         toClone.numParticipations, toClone.numRankingPoints, toClone.numRankingPos, toClone.numPoints,

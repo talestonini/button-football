@@ -49,6 +49,30 @@ fun Application.configureButtonFootballApi() {
             }
         }
 
+        get("/championshipTypes/{id}/rankings") {
+            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("missing championship type id")
+            val numUpToEdition = call.queryParameters["numUpToEdition"]?.toInt()
+                ?: throw IllegalStateException("missing up-to-edition number")
+            val championshipType = championshipTypeService.read(id)
+            val rankings = rankingService.read(championshipType.code, numUpToEdition)
+            if (rankings.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, rankings)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
+        get("/championshipTypes/{id}/scorings") {
+            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("missing championship type id")
+            val championshipType = championshipTypeService.read(id)
+            val scorings = scoringService.read(championshipType.code)
+            if (scorings.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, scorings)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
         get("/championships") {
             val codChampionshipType = call.queryParameters["codChampionshipType"]
             val championships = championshipService.read(codChampionshipType)
@@ -116,9 +140,9 @@ fun Application.configureButtonFootballApi() {
 
         get("/rankings") {
             val codChampionshipType = call.queryParameters["codChampionshipType"]
-                ?: throw IllegalStateException("missing codChampionshipType")
+                ?: throw IllegalStateException("missing championship type code")
             val numUpToEdition = call.queryParameters["numUpToEdition"]?.toInt()
-                ?: throw IllegalStateException("missing numUpToEdition")
+                ?: throw IllegalStateException("missing up-to-edition number")
             val rankings = rankingService.read(codChampionshipType, numUpToEdition)
             if (rankings.isNotEmpty()) {
                 call.respond(HttpStatusCode.OK, rankings)
@@ -129,7 +153,7 @@ fun Application.configureButtonFootballApi() {
 
         get("/scorings") {
             val codChampionshipType = call.queryParameters["codChampionshipType"]
-                ?: throw IllegalStateException("missing codChampionshipType")
+                ?: throw IllegalStateException("missing championship type code")
             val scorings = scoringService.read(codChampionshipType)
             if (scorings.isNotEmpty()) {
                 call.respond(HttpStatusCode.OK, scorings)
