@@ -54,10 +54,11 @@ data class Ranking(
 
 @Serializable
 data class RankingApiView(
-    val championshipType: String, val team: String, val numBestPos: Int, val numWorstPos: Int, val numAvgPos: Double,
-    val numParticipations: Int, val numRankingPoints: Int, val numRankingPos: Int, val numPoints: Int,
-    val numMatches: Int, val numWins: Int, val numDraws: Int, val numLosses: Int, val numGoalsScored: Int,
-    val numGoalsConceded: Int, val numGoalsDiff: Int, val numChampionships: Int, val numUpToEdition: Int,
+    val id: Int, val championshipType: String, val team: String, val teamLogoImgFile: String, val numBestPos: Int,
+    val numWorstPos: Int, val numAvgPos: Double, val numParticipations: Int, val numRankingPoints: Int,
+    val numRankingPos: Int, val numPoints: Int, val numMatches: Int, val numWins: Int, val numDraws: Int,
+    val numLosses: Int, val numGoalsScored: Int, val numGoalsConceded: Int, val numGoalsDiff: Int,
+    val numChampionships: Int, val numUpToEdition: Int,
 )
 
 class RankingService() : BaseService() {
@@ -87,8 +88,10 @@ class RankingService() : BaseService() {
 
         fun toRankingApiView(rankingEntity: RankingEntity): RankingApiView =
             RankingApiView(
+                rankingEntity.id.value,
                 rankingEntity.championshipType.description,
                 rankingEntity.team.name,
+                rankingEntity.team.logoImgFile,
                 rankingEntity.numBestPos,
                 rankingEntity.numWorstPos,
                 rankingEntity.numAvgPos,
