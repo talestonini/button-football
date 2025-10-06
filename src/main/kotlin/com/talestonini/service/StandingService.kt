@@ -1,21 +1,25 @@
 package com.talestonini.service
 
+import com.talestonini.model.ChampionshipsTable
 import com.talestonini.model.StandingEntity
 import com.talestonini.model.StandingsTable
 import kotlinx.serialization.Serializable
+import org.jetbrains.exposed.sql.JoinType
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.selectAll
 
 data class Standing(
     val id: Int?, val championship: Championship, val team: Team, val type: MatchType, val numIntraGrpPos: Int?,
     val numExtraGrpPos: Int?, val numFinalPos: Int?, val numWins: Int, val numDraws: Int, val numLosses: Int,
     val numGoalsScored: Int, val numGoalsConceded: Int, val isIgpUntiedByHeadToHead: Boolean,
-    val isIgpUntiedRandomly: Boolean, val isEgpUntiedRandomly: Boolean, val isFpUntiedRandomly: Boolean
+    val isIgpUntiedRandomly: Boolean, val isEgpUntiedRandomly: Boolean, val isFpUntiedRandomly: Boolean,
 ) {
     // constructor without id field
     constructor(
         championship: Championship, team: Team, type: MatchType, numIntraGrpPos: Int?, numExtraGrpPos: Int?,
         numFinalPos: Int?, numWins: Int, numDraws: Int, numLosses: Int, numGoalsScored: Int, numGoalsConceded: Int,
         isIgpUntiedByHeadToHead: Boolean, isIgpUntiedRandomly: Boolean, isEgpUntiedRandomly: Boolean,
-        isFpUntiedRandomly: Boolean
+        isFpUntiedRandomly: Boolean,
     ) : this(
         null, championship, team, type, numIntraGrpPos, numExtraGrpPos, numFinalPos, numWins, numDraws, numLosses,
         numGoalsScored, numGoalsConceded, isIgpUntiedByHeadToHead, isIgpUntiedRandomly, isEgpUntiedRandomly,
@@ -26,7 +30,7 @@ data class Standing(
     constructor(
         toClone: Standing, numIntraGrpPos: Int?, numExtraGrpPos: Int?, numFinalPos: Int?,
         isIgpUntiedByHeadToHead: Boolean = false, isIgpUntiedRandomly: Boolean = false,
-        isEgpUntiedRandomly: Boolean = false, isFpUntiedRandomly: Boolean = false
+        isEgpUntiedRandomly: Boolean = false, isFpUntiedRandomly: Boolean = false,
     ) : this(
         toClone.id, toClone.championship, toClone.team, toClone.type, numIntraGrpPos, numExtraGrpPos, numFinalPos,
         toClone.numWins, toClone.numDraws, toClone.numLosses, toClone.numGoalsScored, toClone.numGoalsConceded,
@@ -36,7 +40,7 @@ data class Standing(
     constructor(
         toClone: Standing, type: MatchType, numIntraGrpPos: Int?, numExtraGrpPos: Int?, numFinalPos: Int?,
         isIgpUntiedByHeadToHead: Boolean = false, isIgpUntiedRandomly: Boolean = false,
-        isEgpUntiedRandomly: Boolean = false, isFpUntiedRandomly: Boolean = false
+        isEgpUntiedRandomly: Boolean = false, isFpUntiedRandomly: Boolean = false,
     ) : this(
         toClone.id, toClone.championship, toClone.team, type, numIntraGrpPos, numExtraGrpPos, numFinalPos,
         toClone.numWins, toClone.numDraws, toClone.numLosses, toClone.numGoalsScored, toClone.numGoalsConceded,
@@ -122,6 +126,37 @@ class StandingService() : BaseService() {
                         StandingEntity::numIntraGrpPos
                     )
                 )
+                .map { toStandingApiView(it) }
+        }
+    }
+
+    suspend fun read(
+        codChampionshipType: String,
+        edition: Int?,
+        matchTypes: List<String>? = emptyList(),
+    ): List<StandingApiView?> {
+        return dbQuery {
+            StandingsTable.join(
+                ChampionshipsTable,
+                JoinType.INNER,
+                additionalConstraint = { StandingsTable.idChampionship eq ChampionshipsTable.id }
+            )
+                .selectAll()
+                .orderBy(
+                    ChampionshipsTable.codType to SortOrder.ASC,
+                    ChampionshipsTable.numEdition to SortOrder.ASC,
+                    StandingsTable.numFinalPos to SortOrder.ASC,
+                    StandingsTable.numExtraGrpPos to SortOrder.ASC,
+                    StandingsTable.numIntraGrpPos to SortOrder.ASC
+                )
+                .filter {
+                    it[ChampionshipsTable.codType] == codChampionshipType &&
+                            if (edition != null) it[ChampionshipsTable.numEdition] == edition else true
+                }
+                .map { StandingEntity.wrapRow(it) }
+                .filter {
+                    if (matchTypes?.isNotEmpty() == true) matchTypes.contains(it.matchType.description) else true
+                }
                 .map { toStandingApiView(it) }
         }
     }

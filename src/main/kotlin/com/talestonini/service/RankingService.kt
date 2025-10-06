@@ -3,7 +3,6 @@ package com.talestonini.service
 import com.talestonini.model.RankingEntity
 import com.talestonini.model.RankingsTable
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.and
 
 data class Ranking(
     val id: Int?, val championshipType: ChampionshipType, val team: Team, val numBestPos: Int, val numWorstPos: Int,
@@ -111,14 +110,17 @@ class RankingService() : BaseService() {
             )
     }
 
-    suspend fun read(codChampionshipType: String, numUpToEdition: Int): List<RankingApiView?> {
+    suspend fun read(codChampionshipType: String, numUpToEdition: Int?): List<RankingApiView?> {
         return dbQuery {
-            RankingEntity.find {
-                RankingsTable.codChampionshipType eq codChampionshipType and
-                        (RankingsTable.numUpToEdition eq numUpToEdition)
-            }
+            RankingEntity.find { RankingsTable.codChampionshipType eq codChampionshipType }
+                .filter {
+                    if (numUpToEdition != null) it.numUpToEdition == numUpToEdition else true
+                }
                 .sortedWith(
-                    compareBy(RankingEntity::numRankingPos)
+                    compareBy(
+                        RankingEntity::numUpToEdition,
+                        RankingEntity::numRankingPos
+                    )
                 )
                 .map { toRankingApiView(it) }
         }
